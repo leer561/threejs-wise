@@ -2,10 +2,6 @@ import * as THREE from 'three'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
-import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js'
-
 import car from '../../assets/models/envix.fbx'
 import car1 from '../../assets/models/envix1.fbx'
 
@@ -16,18 +12,12 @@ import Glass from '../../assets/models/Glass.png'
 
 const Home = () => {
 	const mainCanvas = useRef()
-	let  renderer,scene,camera,stats, composer, pass
+	let  renderer,scene,camera,stats
 
 	const animate = ()=>{
 		requestAnimationFrame( animate )
-		stats.begin()
-		for ( let i = 0; i < scene.children.length; i ++ ) {
-			let child = scene.children[ i ]
-			child.rotation.x += 0.005
-			child.rotation.y += 0.01
-		}
-		composer.render()
-		stats.end()
+		renderer.render( scene, camera )
+		stats.update()
 	}
 
 	// 挂载后
@@ -43,10 +33,10 @@ const Home = () => {
 		mainCanvas.current.height  = window.innerHeight
 
 		renderer = new THREE.WebGLRenderer({
-			canvas: mainCanvas.current
+			canvas: mainCanvas.current,
+			antialias: true,              //抗锯齿
 		})
-		renderer.setSize( width, height )
-		renderer.setPixelRatio( window.devicePixelRatio )
+
 		renderer.setClearColor(0x000000) // black
 
 		scene = new THREE.Scene()
@@ -61,8 +51,7 @@ const Home = () => {
 
 		camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 1, 3000 )
 		camera.position.set( 1100, 300, 300 )
-		camera.aspect = width / height
-		camera.updateProjectionMatrix()
+
 
 		let light = new THREE.HemisphereLight( 0xffffff, 0x444444 )
 		light.position.set( 0, 200, 0 )
@@ -93,14 +82,12 @@ const Home = () => {
 			scene.add( object )
 			animate()
 		} )
+		// loader.load( nurbs, function ( object ) {
+		// 	console.log(222)
+		// 	scene.add( object )
+		// })
 
-		// SMAA
-		composer = new EffectComposer( renderer )
-		composer.setSize( width, height )
-		composer.addPass( new RenderPass( scene, camera ) )
-		pass = new SMAAPass( window.innerWidth * renderer.getPixelRatio(), window.innerHeight * renderer.getPixelRatio() )
-		composer.addPass( pass )
-
+		renderer.render(scene, camera)
 	}, [])
 	return (
 		<canvas ref={mainCanvas} id="mainCanvas"  ></canvas>
