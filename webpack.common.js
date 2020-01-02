@@ -28,8 +28,8 @@ module.exports = {
 					{
 						loader: 'file-loader',
 						options: {
-							outputPath: 'images',
-							name: '[name].[ext]?[hash]'
+							outputPath: 'models',
+							name: '[name].[ext]'
 						},
 					},
 				]
@@ -38,6 +38,18 @@ module.exports = {
 				test: /\.(woff|woff2|eot|ttf|otf)$/,
 				use: [
 					'file-loader'
+				]
+			},
+			{
+				test: /\.(fbx|FBX)$/,
+				use: [
+					{
+						loader: 'file-loader',
+						options: {
+							outputPath: 'models',
+							name: '[name].[ext]'
+						},
+					},
 				]
 			},
 			{
