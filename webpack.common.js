@@ -41,7 +41,7 @@ module.exports = {
 				]
 			},
 			{
-				test: /\.(fbx|FBX)$/,
+				test: /\.(fbx|FBX|hdr)$/,
 				use: [
 					{
 						loader: 'file-loader',
