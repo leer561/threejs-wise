@@ -32,7 +32,7 @@ const carGlass = {
 	'Body_Glass': true,
 	'Door_RF_MirrorGlass': true,
 	'Door_LF_MirrorGlass': true,
-	'Light_A_Light': true
+	'Door_Last_Grass': true
 }
 
 // 白色的金属相关附件
@@ -57,7 +57,31 @@ const grayParts = {
 	'Wheel_FRO_Plastic': true,
 	'Wheel_BRO_Plastic':true,
 	'Wheel_BLO_Plastic':true,
-	'Wheel_FLO_Plastic':true
+	'Wheel_FLO_Plastic':true,
+	'FrontGrille_A_FrostedPlastic':true,
+	'Body_Plastic':true,
+	'Door_RB_FrostedPlastic':true,
+	'Door_RF_FrostedPlastic':true,
+	'Door_L_FrostedPlastic':true,
+	'Door_LB_FrostedPlastic':true,
+	'chewei':true,
+	'Body_PlasticW':true
 }
 
-export {glassMoulding, carBody, carGlass, whiteParts,grayParts}
+// 轮子
+const carWheels = {
+	'Wheel_BLO_Chrome':true,
+	'Wheel_BLO_Plastic':true,
+	'Wheel_BLO_Tire':true,
+	'Wheel_BRO_Chrome':true,
+	'Wheel_BRO_Plastic':true,
+	'Wheel_BRO_Tire':true,
+	'Wheel_FLO_Chrome':true,
+	'Wheel_FLO_Plastic':true,
+	'Wheel_FLO_Tire':true,
+	'Wheel_FRO_Chrome':true,
+	'Wheel_FRO_Plastic':true,
+	'Wheel_FRO_Tire':true
+}
+
+export {glassMoulding, carBody, carGlass, whiteParts,grayParts,carWheels}

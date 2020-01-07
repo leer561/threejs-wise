@@ -5,7 +5,7 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
 
 // 渲染分组
-import {glassMoulding, carBody,carGlass,whiteParts,grayParts} from "./util"
+import {glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels} from "./util"
 
 // 模型与材质
 import car from '../../assets/models/envix.fbx'
@@ -15,63 +15,13 @@ import Tire_Road_A_c from '../../assets/models/Tire_Road_A_c.png'
 import Glass_G from '../../assets/models/Glass_G.png'
 import Tire_Road_A_nm from '../../assets/models/Tire_Road_A_nm.png'
 import Glass from '../../assets/models/Glass.png'
-
 import quarry_01_1k from '../../assets/images/quarry_01_1k.hdr'
-
 import Ground from '../../assets/images/ground.jpg'
+import shadowImage from '../../assets/images/ferrari_ao.png'
+
+import materialsLib from './material'
 
 const Home = () => {
-	const materialsLib = {
-		main: [
-			new THREE.MeshStandardMaterial( {
-				color: 0xff4400, metalness: 1.0, roughness: 0.2, name: 'orange'
-			} ),
-			new THREE.MeshStandardMaterial( {
-				color: 0x001166, metalness: 1.0, roughness: 0.2, name: 'blue'
-			} ),
-			new THREE.MeshStandardMaterial( {
-				color: 0x990000, metalness: 1.0, roughness: 0.2, name: 'red'
-			} ),
-			new THREE.MeshStandardMaterial( {
-				color: 0x000000, metalness: 1.0, roughness: 0.4, name: 'black'
-			} ),
-			new THREE.MeshStandardMaterial( {
-				color: 0xfefefe, metalness: 0.2, roughness: 0.2, name: 'white'
-			} ),
-			new THREE.MeshStandardMaterial( {
-				color: 0xffffff, metalness: 1.0, roughness: 0.2, name: 'metallic'
-			} ),
-		],
-		glass: [
-			new THREE.MeshPhysicalMaterial( {
-				color: 0xffffff, metalness: 1, roughness: 0, transparency: 0.5, transparent: true, name: 'clear'
-			} ),
-			new THREE.MeshPhysicalMaterial( {
-				color: 0x000000, metalness: 1, roughness: 0, transparency: 0.7, transparent: true, name: 'smoked'
-			} ),
-			new THREE.MeshPhysicalMaterial( {
-				color: 0x001133, metalness: 1, roughness: 0, transparency: 0.7, transparent: true, name: 'blue'
-			} ),
-		],
-		glassMoulding: [
-			new THREE.MeshStandardMaterial( {
-				color: 0xffffff, metalness: 1.0, roughness: 0, name: 'metallic'
-			} ),
-			new THREE.MeshStandardMaterial( {
-				color: 0x000000, metalness: 1.0, roughness: 0.4, name: 'black'
-			} )
-		],
-		whiteParts:[
-			new THREE.MeshStandardMaterial( {
-				color: 0xeaebf0, metalness: 1.0, roughness: 0.1, name: 'metallic'
-			} )
-		],
-		grayParts:[
-			new THREE.MeshStandardMaterial( {
-				color: 0x332e32, metalness: 1.0, roughness: 0.1, name: 'metallic'
-			} )
-		]
-	}
 
 	const mainCanvas = useRef()
 	// 全局场景
@@ -97,7 +47,12 @@ const Home = () => {
 		camera.position.y = 1.5
 		camera.position.z = Math.sin(time / 10) * 6
 		camera.lookAt(0, 0.5, 0)
-		grid.position.z = -(time) % 5
+
+		for (let i = 0; i < carParts.wheels.length; i++) {
+			carParts.wheels[i].rotation.x = -(time * Math.PI)
+		}
+
+		grid.position.z = (time) % 5
 		renderer.render(scene, camera)
 		stats.update()
 	}
@@ -108,57 +63,92 @@ const Home = () => {
 		const glassMouldingMat = materialsLib.glassMoulding[0]
 		const glassMat = materialsLib.glass[0]
 
-		carParts.body.forEach( part => part.material = bodyMat )
-		carParts.glassMoulding.forEach( part => part.material = glassMouldingMat )
-		carParts.glass.forEach(part => part.material = glassMat )
+		carParts.glass.forEach(part => part.material = glassMat)
+		carParts.body.forEach(part => part.material = bodyMat)
+		carParts.glassMoulding.forEach(part => part.material = glassMouldingMat)
 	}
 
 	// 初始化车辆
 	const initCar = () => {
 		const loader = new FBXLoader()
 		loader.load(car, object => {
-			console.log('object', object)
-			// 处理窗户镀铬
-			const {children} = object
-			for (let obj of children) {
-				console.log('obj', obj)
-				// 处理窗户装饰条
-				if (glassMoulding[obj.name]) {
+				console.log('object', object)
+				// 处理窗户镀铬
+				const {children} = object
+				for (let obj of children) {
+					console.log('obj', obj)
 					// 处理窗户装饰条
-					carParts.glassMoulding.push(obj)
-				}
+					if (glassMoulding[obj.name]) {
+						// 处理窗户装饰条
+						carParts.glassMoulding.push(obj)
+					}
 
-				// 车身
-				if (carBody[obj.name]) {
-					// 添加车身
-					carParts.body.push(obj)
-				}
+					// 车身
+					if (carBody[obj.name]) {
+						// 添加车身
+						carParts.body.push(obj)
+					}
 
-				// 车玻璃
-				if (carGlass[obj.name]) {
-					// 添加车身
-					carParts.glass.push(obj)
-				}
+					// 车玻璃
+					if (carGlass[obj.name]) {
+						// 添加车身
+						carParts.glass.push(obj)
+					}
 
-				// 白色部件
-				if (whiteParts[obj.name]) {
-					// 添加车身
-					obj.material = materialsLib.whiteParts[0]
-				}
+					// 白色部件
+					if (whiteParts[obj.name]) {
+						// 添加车身
+						obj.material = materialsLib.whiteParts[0]
+					}
 
-				// 灰色部件
-				if (grayParts[obj.name]) {
-					// 添加车身
-					obj.material = materialsLib.grayParts[0]
+					// 灰色部件
+					if (grayParts[obj.name]) {
+						// 添加车身
+						obj.material = materialsLib.grayParts[0]
+					}
+
+					// 车轮部件
+					if (carWheels[obj.name]) {
+						// 添加车身
+						carParts.wheels.push(obj)
+					}
+
+					// debug 最后的玻璃
+					if (obj.name === 'Door_Last_Grass') {
+						console.log('obj', obj)
+						// 添加车身
+						obj.material = materialsLib.grayParts[0]
+						const box = new THREE.SkeletonHelper(obj)
+						scene.add(box)
+					}
 				}
-			}
-			object.scale.set(0.01, 0.01, 0.01)
-			updateMaterials()
-			scene.add(object)
-		})
+				object.scale.set(0.01, 0.01, 0.01)
+
+				updateMaterials()
+
+				// shadow
+				const texture = new THREE.TextureLoader().load(shadowImage)
+				const shadow = new THREE.Mesh(
+					new THREE.PlaneBufferGeometry(0.6 * 420, 1.4 * 400),
+					new THREE.MeshBasicMaterial({
+						map: texture, opacity: 0.4, transparent: true
+					})
+				)
+				shadow.rotation.x = -Math.PI / 2
+				shadow.renderOrder = 2
+				object.add(shadow)
+
+				scene.add(object)
+			},
+			function (xhr) {
+				console.log((xhr.loaded / xhr.total * 100) + '% loaded')
+			},
+			// called when loading has errors
+			function (error) {
+				console.log('An error happened')
+			})
 
 	}
-
 
 	const init = () => {
 		// 状态
