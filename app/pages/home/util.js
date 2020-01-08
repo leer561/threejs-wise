@@ -43,8 +43,6 @@ const whiteParts = {
 	'Wheel_FRO_Chrome': true,
 	//'Wheel_BRO_Plastic':true,
 	'Wheel_BRO_Chrome': true,
-	'Wheel_Other_FRO_Chrome': true,
-	'Wheel_Other_BRO_Chrome': true,
 	//'Wheel_BLO_Plastic':true,
 	'Wheel_BLO_Chrome': true,
 	'Wheel_FLO_Chrome': true,
@@ -68,6 +66,14 @@ const grayParts = {
 	'Body_PlasticW':true
 }
 
+// 不反光材质
+const grayWhiteParts = {
+	'Wheel_Other_FRO_Chrome': true,
+	'Wheel_Other_BRO_Chrome': true,
+	'Wheel_Other_BLO_Chrome':true,
+	'Wheel_Other_FL_Chrome':true
+}
+
 // 轮子
 const carWheels = {
 	'Wheel_BLO_Chrome':true,
@@ -84,4 +90,19 @@ const carWheels = {
 	'Wheel_FRO_Tire':true
 }
 
-export {glassMoulding, carBody, carGlass, whiteParts,grayParts,carWheels}
+// 轮胎
+const carTire = {
+	'Wheel_BLO_Tire':true,
+	'Wheel_FLO_Tire':true,
+	'Wheel_FRO_Tire':true,
+	'Wheel_BRO_Tire':true
+}
+
+// light
+const carLight = {
+	'Trunk_Light':true,
+	'Body_Light':true,
+	'Light_A_Light':true
+}
+
+export {glassMoulding, carBody, carGlass, whiteParts,grayParts,carWheels,carTire,carLight,grayWhiteParts}

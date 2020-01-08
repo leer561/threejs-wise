@@ -5,11 +5,11 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
 
 // 渲染分组
-import {glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels} from "./util"
+import {glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels, carTire,carLight,grayWhiteParts} from "./util"
 
 // 模型与材质
 import car from '../../assets/models/envix.fbx'
-import car1 from '../../assets/models/envix1.fbx'
+import car1 from '../../assets/models/envix1.FBX'
 
 import Tire_Road_A_c from '../../assets/models/Tire_Road_A_c.png'
 import Glass_G from '../../assets/models/Glass_G.png'
@@ -19,20 +19,30 @@ import quarry_01_1k from '../../assets/images/quarry_01_1k.hdr'
 import Ground from '../../assets/images/ground.jpg'
 import shadowImage from '../../assets/images/ferrari_ao.png'
 
+import JFC_Tire from '../../assets/models/JFC_Tire.jpg'
+
+import LightOff from '../../assets/models/light_off.png'
+import LightOn from '../../assets/models/light_on.png'
+
 import materialsLib from './material'
+
+// 加载器
+const textureLoader = new THREE.TextureLoader()
 
 const Home = () => {
 
 	const mainCanvas = useRef()
 	// 全局场景
-	let renderer, scene, camera, stats, controls, light, grid
+	let renderer, scene, camera, stats, controls, envMap, grid
 	// 车辆部件
 	const carParts = {
 		body: [],
 		rims: [],
 		glass: [],
 		glassMoulding: [],
-		wheels: []
+		wheels: [],
+		tire: [],
+		lights:[]
 	}
 
 	const onWindowResize = () => {
@@ -61,22 +71,66 @@ const Home = () => {
 	const updateMaterials = () => {
 		const bodyMat = materialsLib.main[4]
 		const glassMouldingMat = materialsLib.glassMoulding[0]
-		const glassMat = materialsLib.glass[0]
 
-		carParts.glass.forEach(part => part.material = glassMat)
 		carParts.body.forEach(part => part.material = bodyMat)
 		carParts.glassMoulding.forEach(part => part.material = glassMouldingMat)
 	}
 
+	// 增加车轮纹理
+	const materialWheels = () => {
+		textureLoader.load(JFC_Tire, texture => {
+			texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+			//texture.repeat = THREE.RepeatWrapping
+			// 载入另一个凹凸纹理
+			const mat = new THREE.MeshStandardMaterial({
+				map: texture,
+				color: 0x222222,
+				emissive: 0x333333,
+				emissiveMap: texture
+			})
+
+			//const mat =new THREE.MeshLambertMaterial({color: 0x111111})
+			carParts.tire.forEach(part => part.material = mat)
+		})
+	}
+
+	// 渲染玻璃
+	const renderGlass = ()=>{
+		// 渲染玻璃
+		textureLoader.load(Glass, texture => {
+			// 加载透明度控制
+			const mat = new THREE.MeshStandardMaterial({
+				map: texture,
+				transparent: true,
+				opacity:0.7
+			})
+			carParts.glass.forEach(part => part.material = mat)
+		})
+	}
+
+	// 渲染车灯
+	const renderTailLight = (obj) => {
+		// 处理尾灯贴图
+		textureLoader.load(LightOff, texture => {
+			const mat = new THREE.MeshStandardMaterial({
+				map: texture,
+			})
+			carParts.lights.forEach(part => part.material = mat)
+		})
+	}
+
 	// 初始化车辆
 	const initCar = () => {
+
+		// 车轴材质
+		const grayWhiteMat = materialsLib.grayWhiteParts[0]
+
 		const loader = new FBXLoader()
-		loader.load(car, object => {
+		loader.load(car1, object => {
 				console.log('object', object)
 				// 处理窗户镀铬
 				const {children} = object
 				for (let obj of children) {
-					console.log('obj', obj)
 					// 处理窗户装饰条
 					if (glassMoulding[obj.name]) {
 						// 处理窗户装饰条
@@ -89,10 +143,22 @@ const Home = () => {
 						carParts.body.push(obj)
 					}
 
+					// 车灯
+					if (carLight[obj.name]) {
+						// 添加车身
+						carParts.lights.push(obj)
+					}
+
 					// 车玻璃
 					if (carGlass[obj.name]) {
 						// 添加车身
 						carParts.glass.push(obj)
+					}
+
+					// 灰色偏白色部件
+					if (grayWhiteParts[obj.name]) {
+						// 添加车身
+						obj.material = grayWhiteMat
 					}
 
 					// 白色部件
@@ -121,15 +187,21 @@ const Home = () => {
 						const box = new THREE.SkeletonHelper(obj)
 						scene.add(box)
 					}
+
+					// 车轮胎
+					if (carTire[obj.name]) {
+						carParts.tire.push(obj)
+					}
+
+					// 尾灯
+					renderTailLight(obj)
 				}
 				object.scale.set(0.01, 0.01, 0.01)
-
-				updateMaterials()
 
 				// shadow
 				const texture = new THREE.TextureLoader().load(shadowImage)
 				const shadow = new THREE.Mesh(
-					new THREE.PlaneBufferGeometry(0.6 * 420, 1.4 * 400),
+					new THREE.PlaneBufferGeometry(0.61 * 420, 1.4 * 400),
 					new THREE.MeshBasicMaterial({
 						map: texture, opacity: 0.4, transparent: true
 					})
@@ -138,6 +210,9 @@ const Home = () => {
 				shadow.renderOrder = 2
 				object.add(shadow)
 
+				updateMaterials()
+				materialWheels()
+				renderGlass()
 				scene.add(object)
 			},
 			function (xhr) {
@@ -145,7 +220,7 @@ const Home = () => {
 			},
 			// called when loading has errors
 			function (error) {
-				console.log('An error happened')
+				console.log('An error happened',error)
 			})
 
 	}
@@ -191,7 +266,7 @@ const Home = () => {
 		new RGBELoader()
 			.setDataType(THREE.UnsignedByteType)
 			.load(quarry_01_1k, function (texture) {
-				const envMap = pmremGenerator.fromEquirectangular(texture).texture
+				envMap = pmremGenerator.fromEquirectangular(texture).texture
 				pmremGenerator.dispose()
 				scene.background = envMap
 				scene.environment = envMap

@@ -49,5 +49,10 @@ export default {
 		new THREE.MeshStandardMaterial({
 			color: 0x333333, metalness: 1.0, roughness: 0.1, name: 'metallic'
 		})
+	],
+	grayWhiteParts:[
+		new THREE.MeshLambertMaterial({
+			color: 0x000000, emissive: 0x090909,reflectivity: 0.7
+		})
 	]
 }
