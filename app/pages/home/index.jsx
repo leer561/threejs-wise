@@ -4,9 +4,9 @@ import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader.js'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
-
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 // 渲染分组
-import {glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels, carTire,carLight,grayWhiteParts} from "./util"
+import {glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels, carTire, carLight, grayWhiteParts} from "./util"
 
 // 模型与材质
 import car from '../../assets/models/envix.fbx'
@@ -26,8 +26,8 @@ import LightOff from '../../assets/models/light_off.png'
 import LightOn from '../../assets/models/light_on.png'
 
 // gltf模型载入
-import carGltf from '../../assets/gltf/fltf.gltf'
-import fltfBin from '../../assets/gltf/fltf.bin'
+import carGltf from '../../assets/gltf/gltf.gltf'
+import fltfBin from '../../assets/gltf/gltf.bin'
 import Glass_baseColor from '../../assets/gltf/Glass_baseColor.png'
 import Tire_baseColor from '../../assets/gltf/Tire_baseColor.png'
 import light_baseColor from '../../assets/gltf/light_baseColor.png'
@@ -50,7 +50,7 @@ const Home = () => {
 		glassMoulding: [],
 		wheels: [],
 		tire: [],
-		lights:[]
+		lights: []
 	}
 
 	const onWindowResize = () => {
@@ -103,29 +103,22 @@ const Home = () => {
 	}
 
 	// 渲染玻璃
-	const renderGlass = ()=>{
+	const renderGlass = () => {
 		// 渲染玻璃
-		textureLoader.load(Glass, texture => {
-			// 加载透明度控制
-			const mat = new THREE.MeshStandardMaterial({
-				map: texture,
-				transparent: true,
-				opacity:0.5
-			})
-			carParts.glass.forEach(part => part.material = mat)
+		carParts.glass.forEach(part => {
+			part.material.transparent = true
+			part.material.opacity = 0.5
 		})
 	}
 
-	// 渲染车灯
-	const renderTailLight = (obj) => {
+	// 开灯
+	const lightOn = () => {
 		// 处理尾灯贴图
-		textureLoader.load(light_baseColor, texture => {
-			const mat = new THREE.MeshStandardMaterial({
-				map: texture,
-			})
-			console.log('carParts.lights.',carParts.lights)
-			carParts.lights.forEach(part => part.material = mat)
-		})
+		// textureLoader.load(LightOn, texture => {
+		// 	texture.encoding = THREE.sRGBEncoding
+		// 	console.log('carParts.lights.', carParts.lights)
+		// 	carParts.lights.forEach(part => part.material.map.image  = texture.image)
+		// })
 	}
 
 	// 初始化车辆
@@ -135,6 +128,10 @@ const Home = () => {
 		const grayWhiteMat = materialsLib.grayWhiteParts[0]
 
 		const loader = new GLTFLoader()
+		const dracoLoader =  new DRACOLoader()
+		dracoLoader.setDecoderPath( 'js/libs/draco/gltf/' )
+		loader.setDRACOLoader(dracoLoader)
+
 		loader.load(carGltf, object => {
 				console.log('object', object)
 				// 处理窗户镀铬
@@ -212,7 +209,6 @@ const Home = () => {
 				materialWheels()
 				renderGlass()
 				// 尾灯
-				renderTailLight()
 				scene.add(object.scene)
 			},
 			function (xhr) {
@@ -220,7 +216,7 @@ const Home = () => {
 			},
 			// called when loading has errors
 			function (error) {
-				console.log('An error happened',error)
+				console.log('An error happened', error)
 			})
 
 	}
