@@ -3,6 +3,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js'
 import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader.js'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
 
 // 渲染分组
 import {glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels, carTire,carLight,grayWhiteParts} from "./util"
@@ -23,6 +24,13 @@ import JFC_Tire from '../../assets/models/JFC_Tire.jpg'
 
 import LightOff from '../../assets/models/light_off.png'
 import LightOn from '../../assets/models/light_on.png'
+
+// gltf模型载入
+import carGltf from '../../assets/gltf/fltf.gltf'
+import fltfBin from '../../assets/gltf/fltf.bin'
+import Glass_baseColor from '../../assets/gltf/Glass_baseColor.png'
+import Tire_baseColor from '../../assets/gltf/Tire_baseColor.png'
+import light_baseColor from '../../assets/gltf/light_baseColor.png'
 
 import materialsLib from './material'
 
@@ -102,7 +110,7 @@ const Home = () => {
 			const mat = new THREE.MeshStandardMaterial({
 				map: texture,
 				transparent: true,
-				opacity:0.7
+				opacity:0.5
 			})
 			carParts.glass.forEach(part => part.material = mat)
 		})
@@ -111,10 +119,11 @@ const Home = () => {
 	// 渲染车灯
 	const renderTailLight = (obj) => {
 		// 处理尾灯贴图
-		textureLoader.load(LightOff, texture => {
+		textureLoader.load(light_baseColor, texture => {
 			const mat = new THREE.MeshStandardMaterial({
 				map: texture,
 			})
+			console.log('carParts.lights.',carParts.lights)
 			carParts.lights.forEach(part => part.material = mat)
 		})
 	}
@@ -125,11 +134,11 @@ const Home = () => {
 		// 车轴材质
 		const grayWhiteMat = materialsLib.grayWhiteParts[0]
 
-		const loader = new FBXLoader()
-		loader.load(car1, object => {
+		const loader = new GLTFLoader()
+		loader.load(carGltf, object => {
 				console.log('object', object)
 				// 处理窗户镀铬
-				const {children} = object
+				const {children} = object.scene
 				for (let obj of children) {
 					// 处理窗户装饰条
 					if (glassMoulding[obj.name]) {
@@ -179,24 +188,13 @@ const Home = () => {
 						carParts.wheels.push(obj)
 					}
 
-					// debug 最后的玻璃
-					if (obj.name === 'Door_Last_Grass') {
-						console.log('obj', obj)
-						// 添加车身
-						obj.material = materialsLib.grayParts[0]
-						const box = new THREE.SkeletonHelper(obj)
-						scene.add(box)
-					}
-
 					// 车轮胎
 					if (carTire[obj.name]) {
 						carParts.tire.push(obj)
 					}
 
-					// 尾灯
-					renderTailLight(obj)
 				}
-				object.scale.set(0.01, 0.01, 0.01)
+				object.scene.scale.set(0.01, 0.01, 0.01)
 
 				// shadow
 				const texture = new THREE.TextureLoader().load(shadowImage)
@@ -208,12 +206,14 @@ const Home = () => {
 				)
 				shadow.rotation.x = -Math.PI / 2
 				shadow.renderOrder = 2
-				object.add(shadow)
+				object.scene.add(shadow)
 
 				updateMaterials()
 				materialWheels()
 				renderGlass()
-				scene.add(object)
+				// 尾灯
+				renderTailLight()
+				scene.add(object.scene)
 			},
 			function (xhr) {
 				console.log((xhr.loaded / xhr.total * 100) + '% loaded')
