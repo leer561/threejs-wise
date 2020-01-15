@@ -53,56 +53,72 @@ const whiteParts = {
 // 灰色的相关附件
 const grayParts = {
 	'Wheel_FRO_Plastic': true,
-	'Wheel_BRO_Plastic':true,
-	'Wheel_BLO_Plastic':true,
-	'Wheel_FLO_Plastic':true,
-	'FrontGrille_A_FrostedPlastic':true,
-	'Body_Plastic':true,
-	'Door_RB_FrostedPlastic':true,
-	'Door_RF_FrostedPlastic':true,
-	'Door_L_FrostedPlastic':true,
-	'Door_LB_FrostedPlastic':true,
-	'chewei':true,
-	'Body_PlasticW':true
+	'Wheel_BRO_Plastic': true,
+	'Wheel_BLO_Plastic': true,
+	'Wheel_FLO_Plastic': true,
+	'FrontGrille_A_FrostedPlastic': true,
+	'Body_Plastic': true,
+	'Door_RB_FrostedPlastic': true,
+	'Door_RF_FrostedPlastic': true,
+	'Door_L_FrostedPlastic': true,
+	'Door_LB_FrostedPlastic': true,
+	'chewei': true,
+	'Body_PlasticW': true
 }
 
 // 不反光材质
 const grayWhiteParts = {
 	'Wheel_Other_FRO_Chrome': true,
 	'Wheel_Other_BRO_Chrome': true,
-	'Wheel_Other_BLO_Chrome':true,
-	'Wheel_Other_FL_Chrome':true
+	'Wheel_Other_BLO_Chrome': true,
+	'Wheel_Other_FL_Chrome': true
 }
 
 // 轮子
 const carWheels = {
-	'Wheel_BLO_Chrome':true,
-	'Wheel_BLO_Plastic':true,
-	'Wheel_BLO_Tire':true,
-	'Wheel_BRO_Chrome':true,
-	'Wheel_BRO_Plastic':true,
-	'Wheel_BRO_Tire':true,
-	'Wheel_FLO_Chrome':true,
-	'Wheel_FLO_Plastic':true,
-	'Wheel_FLO_Tire':true,
-	'Wheel_FRO_Chrome':true,
-	'Wheel_FRO_Plastic':true,
-	'Wheel_FRO_Tire':true
+	'Wheel_BLO_Chrome': true,
+	'Wheel_BLO_Plastic': true,
+	'Wheel_BLO_Tire': true,
+	'Wheel_BRO_Chrome': true,
+	'Wheel_BRO_Plastic': true,
+	'Wheel_BRO_Tire': true,
+	'Wheel_FLO_Chrome': true,
+	'Wheel_FLO_Plastic': true,
+	'Wheel_FLO_Tire': true,
+	'Wheel_FRO_Chrome': true,
+	'Wheel_FRO_Plastic': true,
+	'Wheel_FRO_Tire': true
 }
 
 // 轮胎
 const carTire = {
-	'Wheel_BLO_Tire':true,
-	'Wheel_FLO_Tire':true,
-	'Wheel_FRO_Tire':true,
-	'Wheel_BRO_Tire':true
+	'Wheel_BLO_Tire': true,
+	'Wheel_FLO_Tire': true,
+	'Wheel_FRO_Tire': true,
+	'Wheel_BRO_Tire': true
 }
 
 // light
 const carLight = {
-	'Trunk_Light':true,
-	'Body_Light':true,
-	'Light_A_Light':true
+	'Trunk_Light': true,
+	'Body_Light': true,
+	'Light_A_Light': true
 }
 
-export {glassMoulding, carBody, carGlass, whiteParts,grayParts,carWheels,carTire,carLight,grayWhiteParts}
+// 点击开门的部件
+const touchParts = {
+	// 左前门
+	'Door_LF_Glass': 'leftDoor',
+	'Door_LF_Chrome': 'leftDoor',
+	'Door_LF_Paint': 'leftDoor',
+	'Door_LF_MirrorGlass': 'leftDoor',
+	'Door_L_FrostedPlastic':'leftDoor',
+
+	// 车位
+	'Trunk_Paint':'trunk',
+	'Trunk_Light':'trunk',
+	'Trunk_Chrome':'trunk',
+	'Trunk_Body_Plate':'trunk'
+}
+
+export {touchParts,glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels, carTire, carLight, grayWhiteParts}

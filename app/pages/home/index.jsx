@@ -4,9 +4,9 @@ import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader.js'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader.js'
 // 渲染分组
-import {glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels, carTire, carLight, grayWhiteParts} from "./util"
+import {touchParts, glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels, carTire, carLight, grayWhiteParts} from "./util"
 
 // 模型与材质
 import car from '../../assets/models/envix.fbx'
@@ -41,7 +41,7 @@ const Home = () => {
 
 	const mainCanvas = useRef()
 	// 全局场景
-	let renderer, scene, camera, stats, controls, envMap, grid
+	let renderer, scene, camera, stats, controls, envMap, grid, car
 	// 车辆部件
 	const carParts = {
 		body: [],
@@ -50,7 +50,9 @@ const Home = () => {
 		glassMoulding: [],
 		wheels: [],
 		tire: [],
-		lights: []
+		lights: [],
+		leftDoor: [],
+		trunk: []
 	}
 
 	const onWindowResize = () => {
@@ -61,9 +63,9 @@ const Home = () => {
 
 	const render = () => {
 		const time = -performance.now() / 1000
-		camera.position.x = Math.cos(time / 10) * 6
+		camera.position.x = 5
 		camera.position.y = 1.5
-		camera.position.z = Math.sin(time / 10) * 6
+		camera.position.z = 3
 		camera.lookAt(0, 0.5, 0)
 
 		for (let i = 0; i < carParts.wheels.length; i++) {
@@ -107,7 +109,7 @@ const Home = () => {
 		// 渲染玻璃
 		carParts.glass.forEach(part => {
 			part.material.transparent = true
-			part.material.opacity = 0.5
+			part.material.opacity = 0.9
 		})
 	}
 
@@ -121,6 +123,25 @@ const Home = () => {
 		// })
 	}
 
+	// 动画处理
+	const animated = () => {
+		// 找到前门
+		const group = new THREE.Group()
+		// 添加一个父级网格 设置透明
+		const cubeGeometry  = new THREE.BoxBufferGeometry(0, 0, 0, 1, 1, 1)
+		cubeGeometry.translate(-1, 0, 0)
+		const cube = new THREE.Mesh(cubeGeometry, new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0}))
+		cube.position.set(25,0,-122.2)
+		group.add(cube)
+		carParts.leftDoor.forEach(part => {
+			cube.add(part)
+		})
+		car.add(group)
+		console.log('group',group)
+
+		group.rotateY(-70*3.1415/180)
+	}
+
 	// 初始化车辆
 	const initCar = () => {
 
@@ -128,14 +149,15 @@ const Home = () => {
 		const grayWhiteMat = materialsLib.grayWhiteParts[0]
 
 		const loader = new GLTFLoader()
-		const dracoLoader =  new DRACOLoader()
-		dracoLoader.setDecoderPath( 'js/libs/draco/gltf/' )
+		const dracoLoader = new DRACOLoader()
+		dracoLoader.setDecoderPath('js/libs/draco/gltf/')
 		loader.setDRACOLoader(dracoLoader)
 
 		loader.load(carGltf, object => {
 				console.log('object', object)
 				// 处理窗户镀铬
-				const {children} = object.scene
+				car = object.scene
+				const {children} = car
 				for (let obj of children) {
 					// 处理窗户装饰条
 					if (glassMoulding[obj.name]) {
@@ -190,8 +212,17 @@ const Home = () => {
 						carParts.tire.push(obj)
 					}
 
+					// 可动的分组
+					if (touchParts[obj.name]) {
+						if (touchParts[obj.name] === 'leftDoor') {
+							carParts.leftDoor.push(obj)
+						} else {
+							carParts.trunk.push(obj)
+						}
+					}
+
 				}
-				object.scene.scale.set(0.01, 0.01, 0.01)
+				car.scale.set(0.01, 0.01, 0.01)
 
 				// shadow
 				const texture = new THREE.TextureLoader().load(shadowImage)
@@ -203,13 +234,14 @@ const Home = () => {
 				)
 				shadow.rotation.x = -Math.PI / 2
 				shadow.renderOrder = 2
-				object.scene.add(shadow)
+				car.add(shadow)
 
 				updateMaterials()
 				materialWheels()
 				renderGlass()
 				// 尾灯
-				scene.add(object.scene)
+				scene.add(car)
+				animated(object)
 			},
 			function (xhr) {
 				console.log((xhr.loaded / xhr.total * 100) + '% loaded')
