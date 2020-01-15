@@ -5,6 +5,8 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader.js'
+
+
 // 渲染分组
 import {touchParts, glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels, carTire, carLight, grayWhiteParts} from "./util"
 
@@ -36,7 +38,23 @@ import materialsLib from './material'
 
 // 加载器
 const textureLoader = new THREE.TextureLoader()
+THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
 
+	var q1 = new THREE.Quaternion()
+	return function ( point, axis, angle ) {
+
+		q1.setFromAxisAngle( axis, angle )
+
+		this.quaternion.multiplyQuaternions( q1, this.quaternion )
+
+		this.position.sub( point )
+		this.position.applyQuaternion( q1 )
+		this.position.add( point )
+
+		return this
+	}
+
+}()
 const Home = () => {
 
 	const mainCanvas = useRef()
@@ -128,18 +146,13 @@ const Home = () => {
 		// 找到前门
 		const group = new THREE.Group()
 		// 添加一个父级网格 设置透明
-		const cubeGeometry  = new THREE.BoxBufferGeometry(0, 0, 0, 1, 1, 1)
-		cubeGeometry.translate(-1, 0, 0)
-		const cube = new THREE.Mesh(cubeGeometry, new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0}))
-		cube.position.set(25,0,-122.2)
-		group.add(cube)
 		carParts.leftDoor.forEach(part => {
-			cube.add(part)
+			group.add(part)
 		})
 		car.add(group)
-		console.log('group',group)
-
-		group.rotateY(-70*3.1415/180)
+		// 设置动画参数
+		group.position.set(70,0,-40)
+		group.rotateY(-.7)
 	}
 
 	// 初始化车辆
