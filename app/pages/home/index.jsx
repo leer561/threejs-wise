@@ -38,23 +38,8 @@ import materialsLib from './material'
 
 // 加载器
 const textureLoader = new THREE.TextureLoader()
-THREE.Object3D.prototype.rotateAroundWorldAxis = function() {
 
-	var q1 = new THREE.Quaternion()
-	return function ( point, axis, angle ) {
-
-		q1.setFromAxisAngle( axis, angle )
-
-		this.quaternion.multiplyQuaternions( q1, this.quaternion )
-
-		this.position.sub( point )
-		this.position.applyQuaternion( q1 )
-		this.position.add( point )
-
-		return this
-	}
-
-}()
+// 首页组件
 const Home = () => {
 
 	const mainCanvas = useRef()
@@ -81,10 +66,10 @@ const Home = () => {
 
 	const render = () => {
 		const time = -performance.now() / 1000
-		camera.position.x = 5
-		camera.position.y = 1.5
-		camera.position.z = 3
-		camera.lookAt(0, 0.5, 0)
+		// camera.position.x = 5
+		// camera.position.y = 1.5
+		// camera.position.z = 3
+		// camera.lookAt(0, 0.5, 0)
 
 		for (let i = 0; i < carParts.wheels.length; i++) {
 			carParts.wheels[i].rotation.x = -(time * Math.PI)
@@ -150,9 +135,6 @@ const Home = () => {
 			group.add(part)
 		})
 		car.add(group)
-		// 设置动画参数
-		group.position.set(70,0,-40)
-		group.rotateY(-.7)
 	}
 
 	// 初始化车辆
@@ -274,8 +256,8 @@ const Home = () => {
 		container.appendChild(stats.dom)
 
 		// 相机
-		camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 200)
-
+		camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 200)
+		camera.position.set( 5, 1.5, 3 )
 		// 场景
 		scene = new THREE.Scene()
 		// scene.fog = new THREE.Fog( 0xd7cbb1, 1, 80 )
@@ -313,8 +295,16 @@ const Home = () => {
 				scene.environment = envMap
 			})
 
+
+		// 处理镜头
+		controls = new OrbitControls( camera, renderer.domElement )
+		controls.maxPolarAngle = Math.PI * 0.5
+		controls.minDistance = 1
+		controls.maxDistance = 300
+
 		window.addEventListener('resize', onWindowResize, false)
 		renderer.setAnimationLoop(render)
+
 
 		// 初始化
 		initCar()
