@@ -5,7 +5,7 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader.js'
-
+import { Interaction } from 'three.interaction'
 
 // 渲染分组
 import {touchParts, glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels, carTire, carLight, grayWhiteParts} from "./util"
@@ -34,17 +34,26 @@ import Glass_baseColor from '../../assets/gltf/Glass_baseColor.png'
 import Tire_baseColor from '../../assets/gltf/Tire_baseColor.png'
 import light_baseColor from '../../assets/gltf/light_baseColor.png'
 
+// 可触发物件
+import flare from '../../assets/images/flare.png'
+import dot_orange from '../../assets/images/dot_orange.png'
+
 import materialsLib from './material'
 
+
+import {LeftDoorAnimate} from './left-door'
 // 加载器
 const textureLoader = new THREE.TextureLoader()
-
+const clock = new THREE.Clock()
 // 首页组件
 const Home = () => {
 
 	const mainCanvas = useRef()
 	// 全局场景
-	let renderer, scene, camera, stats, controls, envMap, grid, car
+	let renderer, scene, camera, stats, controls, envMap, grid, car,mixer
+
+	// 动画需要变量
+	let leftDoorAnimate,group
 	// 车辆部件
 	const carParts = {
 		body: [],
@@ -65,6 +74,7 @@ const Home = () => {
 	}
 
 	const render = () => {
+		requestAnimationFrame( render )
 		const time = -performance.now() / 1000
 		// camera.position.x = 5
 		// camera.position.y = 1.5
@@ -82,11 +92,11 @@ const Home = () => {
 
 	// 渲染车辆
 	const updateMaterials = () => {
-		const bodyMat = materialsLib.main[4]
-		const glassMouldingMat = materialsLib.glassMoulding[0]
-
-		carParts.body.forEach(part => part.material = bodyMat)
-		carParts.glassMoulding.forEach(part => part.material = glassMouldingMat)
+		// const bodyMat = materialsLib.main[4]
+		// const glassMouldingMat = materialsLib.glassMoulding[0]
+		//
+		// carParts.body.forEach(part => part.material = bodyMat)
+		// carParts.glassMoulding.forEach(part => part.material = glassMouldingMat)
 	}
 
 	// 增加车轮纹理
@@ -129,12 +139,18 @@ const Home = () => {
 	// 动画处理
 	const animated = () => {
 		// 找到前门
-		const group = new THREE.Group()
+		group = new THREE.Group()
 		// 添加一个父级网格 设置透明
 		carParts.leftDoor.forEach(part => {
+			//part.material.side = THREE.DoubleSide
 			group.add(part)
+
+			// 双面渲染部分
+			//if(part)
 		})
 		car.add(group)
+		leftDoorAnimate = new LeftDoorAnimate(group)
+		leftDoorAnimate.play()
 	}
 
 	// 初始化车辆
@@ -144,16 +160,34 @@ const Home = () => {
 		const grayWhiteMat = materialsLib.grayWhiteParts[0]
 
 		const loader = new GLTFLoader()
-		const dracoLoader = new DRACOLoader()
-		dracoLoader.setDecoderPath('js/libs/draco/gltf/')
-		loader.setDRACOLoader(dracoLoader)
-
 		loader.load(carGltf, object => {
 				console.log('object', object)
 				// 处理窗户镀铬
 				car = object.scene
 				const {children} = car
 				for (let obj of children) {
+
+					// 处理增加可碰触物件
+					if(obj.name==='Door_LF_Paint'){
+						// 生成可触碰点
+						const geometry = new THREE.CircleGeometry( 10, 160 )
+						textureLoader.load(dot_orange, texture => {
+							const mat = new THREE.MeshStandardMaterial({
+								map: texture,
+								transparent:true,
+								opacity:0.99,
+								//color:0x37c1b4
+							})
+							const leftDoorTouch = new THREE.Mesh( geometry, mat )
+							obj.add(leftDoorTouch)
+							leftDoorTouch.position.set(91,87,0)
+							leftDoorTouch.rotateY(1.57)
+							leftDoorTouch.on('click', function(ev) {
+								animated()
+							})
+						})
+					}
+
 					// 处理窗户装饰条
 					if (glassMoulding[obj.name]) {
 						// 处理窗户装饰条
@@ -187,13 +221,13 @@ const Home = () => {
 					// 白色部件
 					if (whiteParts[obj.name]) {
 						// 添加车身
-						obj.material = materialsLib.whiteParts[0]
+						//obj.material = materialsLib.whiteParts[0]
 					}
 
 					// 灰色部件
 					if (grayParts[obj.name]) {
 						// 添加车身
-						obj.material = materialsLib.grayParts[0]
+						//obj.material = materialsLib.grayParts[0]
 					}
 
 					// 车轮部件
@@ -236,7 +270,7 @@ const Home = () => {
 				renderGlass()
 				// 尾灯
 				scene.add(car)
-				animated(object)
+				//animated(object)
 			},
 			function (xhr) {
 				console.log((xhr.loaded / xhr.total * 100) + '% loaded')
@@ -256,8 +290,8 @@ const Home = () => {
 		container.appendChild(stats.dom)
 
 		// 相机
-		camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 200)
-		camera.position.set( 5, 1.5, 3 )
+		camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 200)
+		camera.position.set( 5, 2.5, 5 )
 		// 场景
 		scene = new THREE.Scene()
 		// scene.fog = new THREE.Fog( 0xd7cbb1, 1, 80 )
@@ -303,10 +337,12 @@ const Home = () => {
 		controls.maxDistance = 300
 
 		window.addEventListener('resize', onWindowResize, false)
-		renderer.setAnimationLoop(render)
 
+		// 绑定事件处理
+		const interaction = new Interaction(renderer, scene, camera)
 
 		// 初始化
+		render()
 		initCar()
 
 	}

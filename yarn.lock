@@ -6374,6 +6374,11 @@ text-table@^0.2.0:
   resolved "https://registry.npm.taobao.org/text-table/download/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
+three.interaction@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.npm.taobao.org/three.interaction/download/three.interaction-0.2.2.tgz#01ce80ba7cacd24ada09dc57f1d64e9dd5d7a0b0"
+  integrity sha1-Ac6Aunys0kraCdxX8dZOndXXoLA=
+
 three@^0.112.1:
   version "0.112.1"
   resolved "https://registry.npm.taobao.org/three/download/three-0.112.1.tgz#f8d8f4d0f8e5f753dac6260491b8209457fdc131"

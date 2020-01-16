@@ -113,6 +113,7 @@ const touchParts = {
 	'Door_LF_Paint': 'leftDoor',
 	'Door_LF_MirrorGlass': 'leftDoor',
 	'Door_L_FrostedPlastic':'leftDoor',
+	'cheqianmen_left':'leftDoor',
 
 	// 车位
 	'Trunk_Paint':'trunk',
