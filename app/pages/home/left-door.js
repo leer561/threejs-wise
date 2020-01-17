@@ -14,7 +14,7 @@ class LeftDoorAnimate {
 		this.timer = null
 	}
 
-	move() {
+	move(func) {
 		if (!this.active) return
 		const data = this.data[this.index]
 		this.index += 1
@@ -25,12 +25,13 @@ class LeftDoorAnimate {
 			this.active = false
 			this.index = 0
 			clearInterval(this.timer)
+			func()
 		}
 	}
 
-	play() {
+	play(func) {
 		this.active = true
-		this.timer = setInterval(() => this.move(), 50)
+		this.timer = setInterval(() => this.move(func), 50)
 	}
 }
 
