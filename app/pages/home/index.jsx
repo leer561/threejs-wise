@@ -65,7 +65,7 @@ const Home = () => {
 	let renderer, scene, camera, stats, controls, envMap, grid, car
 
 	// 内饰全局场景
-	let rendererTrim, sceneTrim, cameraTrim, controlsTrim,trimCube
+	let rendererTrim, sceneTrim, cameraTrim, controlsTrim, trimCube
 	// 动画需要变量
 	let leftDoorAnimate, group
 	// 车辆部件
@@ -103,9 +103,9 @@ const Home = () => {
 		renderer.render(scene, camera)
 		stats.update()
 
-		if(controlsTrim){
+		if (controlsTrim) {
 			controlsTrim.update() // required when damping is enabled
-			rendererTrim.render( sceneTrim, cameraTrim )
+			rendererTrim.render(sceneTrim, cameraTrim)
 		}
 	}
 
@@ -176,9 +176,9 @@ const Home = () => {
 	}
 
 	// 初始化内饰场景
-	const initTrim = ()=>{
-		if(!trimCube) return
-		trimCube.geometry.scale( 1, 1, - 1 )
+	const initTrim = () => {
+		if (!trimCube) return
+		trimCube.geometry.scale(1, 1, -1)
 		rendererTrim = new THREE.WebGLRenderer({canvas: trimCanvas.current})
 		rendererTrim.setPixelRatio(window.devicePixelRatio)
 		rendererTrim.setSize(window.innerWidth, window.innerHeight)
@@ -186,16 +186,16 @@ const Home = () => {
 
 		sceneTrim = new THREE.Scene()
 
-		cameraTrim = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1024 )
+		cameraTrim = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1024)
 		cameraTrim.position.z = 0.01
 
-		controlsTrim = new OrbitControls( cameraTrim, rendererTrim.domElement )
+		controlsTrim = new OrbitControls(cameraTrim, rendererTrim.domElement)
 		controlsTrim.enableZoom = false
 		controlsTrim.enablePan = false
 		controlsTrim.enableDamping = true
 		controlsTrim.dampingFactor = 0.1
-		controlsTrim.rotateSpeed = - 0.26
-		sceneTrim.add( trimCube )
+		controlsTrim.rotateSpeed = -0.26
+		sceneTrim.add(trimCube)
 
 	}
 
@@ -216,21 +216,30 @@ const Home = () => {
 					// 处理增加可碰触物件
 					if (obj.name === 'Door_LF_Paint') {
 						// 生成可触碰点
-						const geometry = new THREE.CircleGeometry(10, 160)
-						textureLoader.load(dot_orange, texture => {
-							const mat = new THREE.MeshStandardMaterial({
-								map: texture,
-								transparent: true,
-								opacity: 0.99,
-								//color:0x37c1b4
-							})
-							const leftDoorTouch = new THREE.Mesh(geometry, mat)
-							obj.add(leftDoorTouch)
-							leftDoorTouch.position.set(91, 87, 0)
-							leftDoorTouch.rotateY(1.57)
-							leftDoorTouch.on('click', function (ev) {
-								animated()
-							})
+						// const geometry = new THREE.CircleGeometry(6, 32)
+						// textureLoader.load(dot_orange, texture => {
+						// 	const mat = new THREE.MeshStandardMaterial({
+						// 		map: texture,
+						// 		transparent: true,
+						// 		opacity: 0.99,
+						// 		color:0xffffff
+						// 	})
+						// 	const leftDoorTouch = new THREE.Mesh(geometry, mat)
+						// 	obj.add(leftDoorTouch)
+						// 	leftDoorTouch.position.set(91, 87, 0)
+						// 	leftDoorTouch.rotateY(1.57)
+						// 	leftDoorTouch.on('click', function (ev) {
+						// 		animated()
+						// 	})
+						// })
+						const spriteMap = new THREE.TextureLoader().load(dot_orange)
+						const spriteMaterial = new THREE.SpriteMaterial({map: spriteMap, color: 0xffffff})
+						const sprite = new THREE.Sprite(spriteMaterial)
+						sprite.position.set(92, 87, 0)
+						sprite.scale.set(12, 12, 1.0)
+						obj.add(sprite)
+						sprite.on('click', ev=> {
+							animated()
 						})
 					}
 
@@ -342,7 +351,7 @@ const Home = () => {
 				})
 			})
 		})).then(function (materials) {
-			console.log('materials',materials)
+			console.log('materials', materials)
 			//将材质贴到正方体的6个面.
 			const geometry = new THREE.BoxGeometry(1024, 1024, 1024)
 			trimCube = new THREE.Mesh(
@@ -413,7 +422,7 @@ const Home = () => {
 		// 初始化
 		render()
 		initCar()
-		initPreTrim().then(()=>initTrim())
+		initPreTrim().then(() => initTrim())
 
 	}
 
