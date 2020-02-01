@@ -9,9 +9,11 @@ import {Interaction} from "three.interaction"
 
 import {Car} from '../../../common/services/car'
 import {onWindowResize} from '../../../common/services/window-resize'
+import dot_orange from "../../../assets/images/dot_orange.png"
 
-const OutLook = ({front}) => {
-	console.log('front',front)
+const textureLoader = new THREE.TextureLoader()
+
+const OutLook = ({front,switchFunc}) => {
 	// 外观绘图
 	const mainCanvas = useRef()
 
@@ -96,8 +98,28 @@ const OutLook = ({front}) => {
 		const interaction = new Interaction(renderer, scene, camera)
 
 		// 初始化车辆
-		const car = new Car(scene)
-		car.init()
+		const car = new Car(scene,switchFunc)
+		car.init().then((carScene=>{
+			const {children} = carScene
+			// 遍历处理零件
+			for (let obj of children) {
+				// 使用精灵增加可碰触物件
+				if (obj.name === 'Door_LF_Paint') {
+					const spriteMap = textureLoader.load(dot_orange)
+					const spriteMaterial = new THREE.SpriteMaterial({map: spriteMap, color: 0xffffff})
+					const sprite = new THREE.Sprite(spriteMaterial)
+					sprite.position.set(92, 87, 0)
+					sprite.scale.set(12, 12, 1.0)
+					obj.add(sprite)
+					sprite.on('click', ev=> {
+						car.animated(()=>{
+							switchFunc()
+							// TODO 镜头移动
+						})
+					})
+				}
+			}
+		}))
 		carParts = car.carParts
 		// 渲染
 		render()

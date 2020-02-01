@@ -94,7 +94,7 @@ const Home = () => {
 
 	return (
 		<div>
-			<OutLook ref={carCanvas} front={front?'block':'none'} id="carCanvas"/>
+			<OutLook ref={carCanvas} switchFunc={()=>setFront(false)} front={front?'block':'none'} id="carCanvas"/>
 			<canvas ref={trimCanvas} style={{display: !front?'block':'none'}} id="trimCanvas"/>
 		</div>
 	)
