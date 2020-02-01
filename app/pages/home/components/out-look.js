@@ -10,7 +10,8 @@ import {Interaction} from "three.interaction"
 import {Car} from '../../../common/services/car'
 import {onWindowResize} from '../../../common/services/window-resize'
 
-const OutLook = (front) => {
+const OutLook = ({front}) => {
+	console.log('front',front)
 	// 外观绘图
 	const mainCanvas = useRef()
 

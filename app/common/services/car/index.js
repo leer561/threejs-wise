@@ -4,10 +4,15 @@ import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
 
 // 加载器
 import carGltf from "../../../assets/gltf/gltf.gltf"
+import carBin from "../../../assets/gltf/gltf.bin"
 import dot_orange from "../../../assets/images/dot_orange.png"
 import shadowImage from "../../../assets/images/ferrari_ao.png"
 import LightOff from '../../../assets/models/light_off.png'
 import LightOn from '../../../assets/models/light_on.png'
+import Glass_baseColor from '../../../assets/gltf/Glass_baseColor.png'
+import Tire_baseColor from '../../../assets/gltf/Tire_baseColor.png'
+import light_baseColor from '../../../assets/gltf/light_baseColor.png'
+
 
 import * as carParts from './util'
 import material from "./material"

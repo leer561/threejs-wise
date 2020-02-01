@@ -25,7 +25,7 @@ const Home = () => {
 	const carCanvas = useRef()
 	const trimCanvas = useRef()
 	// 绘图cancans变量切换
-	const [front, setFront] = useState('block')
+	const [front, setFront] = useState(true)
 
 	// 内饰全局场景
 	let rendererTrim, sceneTrim, cameraTrim, controlsTrim, trimCube
@@ -94,8 +94,8 @@ const Home = () => {
 
 	return (
 		<div>
-			<OutLook ref={carCanvas} front={front} id="carCanvas"/>
-			<canvas ref={trimCanvas} style={{display: !front}} id="trimCanvas"/>
+			<OutLook ref={carCanvas} front={front?'block':'none'} id="carCanvas"/>
+			<canvas ref={trimCanvas} style={{display: !front?'block':'none'}} id="trimCanvas"/>
 		</div>
 	)
 }
