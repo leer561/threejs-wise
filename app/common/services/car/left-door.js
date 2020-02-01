@@ -1,6 +1,6 @@
 // 提供车前门动画
 
-class LeftDoorAnimate {
+export class LeftDoorAnimate {
 	constructor(obj) {
 		this.active = false
 		this.data = [
@@ -35,4 +35,3 @@ class LeftDoorAnimate {
 	}
 }
 
-export {LeftDoorAnimate}

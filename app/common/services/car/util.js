@@ -1,5 +1,5 @@
 // 车玻璃窗饰条
-const glassMoulding = {
+export const glassMoulding = {
 	'Door_LF_Chrome': true,
 	'Door_LB_Chrome': true,
 	'Body_Chrome': true,
@@ -8,7 +8,7 @@ const glassMoulding = {
 }
 
 // 定义车身渲染颜色
-const carBody = {
+export const carBody = {
 	'Carpaint': true,
 	'chehoumen': true,
 	'cheqianmen': true,
@@ -23,7 +23,7 @@ const carBody = {
 }
 
 // 定义玻璃
-const carGlass = {
+export const carGlass = {
 	'Door_RF_Glass': true,
 	'Door_RB_Glass': true,
 	'Body_Glass1': true,
@@ -36,7 +36,7 @@ const carGlass = {
 }
 
 // 白色的金属相关附件
-const whiteParts = {
+export const whiteParts = {
 	'Trunk_Chrome': true,
 	'FrontGrille_A_Chrome': true,
 	//'Wheel_FRO_Plastic':true,
@@ -51,7 +51,7 @@ const whiteParts = {
 }
 
 // 灰色的相关附件
-const grayParts = {
+export const grayParts = {
 	'Wheel_FRO_Plastic': true,
 	'Wheel_BRO_Plastic': true,
 	'Wheel_BLO_Plastic': true,
@@ -67,7 +67,7 @@ const grayParts = {
 }
 
 // 不反光材质
-const grayWhiteParts = {
+export const grayWhiteParts = {
 	'Wheel_Other_FRO_Chrome': true,
 	'Wheel_Other_BRO_Chrome': true,
 	'Wheel_Other_BLO_Chrome': true,
@@ -75,7 +75,7 @@ const grayWhiteParts = {
 }
 
 // 轮子
-const carWheels = {
+export const carWheels = {
 	'Wheel_BLO_Chrome': true,
 	'Wheel_BLO_Plastic': true,
 	'Wheel_BLO_Tire': true,
@@ -91,7 +91,7 @@ const carWheels = {
 }
 
 // 轮胎
-const carTire = {
+export const carTire = {
 	'Wheel_BLO_Tire': true,
 	'Wheel_FLO_Tire': true,
 	'Wheel_FRO_Tire': true,
@@ -99,27 +99,37 @@ const carTire = {
 }
 
 // light
-const carLight = {
+export const carLight = {
 	'Trunk_Light': true,
 	'Body_Light': true,
 	'Light_A_Light': true
 }
 
 // 点击开门的部件
-const touchParts = {
+export const touchParts = {
 	// 左前门
 	'Door_LF_Glass': 'leftDoor',
 	'Door_LF_Chrome': 'leftDoor',
 	'Door_LF_Paint': 'leftDoor',
 	'Door_LF_MirrorGlass': 'leftDoor',
-	'Door_L_FrostedPlastic':'leftDoor',
-	'cheqianmen_left':'leftDoor',
+	'Door_L_FrostedPlastic': 'leftDoor',
+	'cheqianmen_left': 'leftDoor',
 
 	// 车位
-	'Trunk_Paint':'trunk',
-	'Trunk_Light':'trunk',
-	'Trunk_Chrome':'trunk',
-	'Trunk_Body_Plate':'trunk'
+	'Trunk_Paint': 'trunk',
+	'Trunk_Light': 'trunk',
+	'Trunk_Chrome': 'trunk',
+	'Trunk_Body_Plate': 'trunk'
 }
 
-export {touchParts,glassMoulding, carBody, carGlass, whiteParts, grayParts, carWheels, carTire, carLight, grayWhiteParts}
+export const partsArray = {
+	body: [],
+	rims: [],
+	glass: [],
+	glassMoulding: [],
+	wheels: [],
+	tire: [],
+	lights: [],
+	leftDoor: [],
+	trunk: []
+}
