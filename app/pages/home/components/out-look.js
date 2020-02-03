@@ -13,15 +13,18 @@ import dot_orange from "../../../assets/images/dot_orange.png"
 // 其他
 import {Car} from '../../../common/services/car'
 import {LeftDoorAnimate} from './left-door-animate'
+import {OutColors} from "./out-colors"
 
 const textureLoader = new THREE.TextureLoader()
 
 const OutLook = ({front, switchFunc, setRender,trimInit}) => {
+	// 设置sate
+	const [instanceCar, setInstanceCar] = useState(null)
 	// 外观绘图
 	const mainCanvas = useRef()
 
 	// 车辆全局场景
-	let renderer, scene, camera, controls, envMap, grid, carParts, animationFrameId, stats
+	let renderer, scene, camera, controls, envMap, grid
 
 	// 初始化
 	const init = () => {
@@ -79,13 +82,14 @@ const OutLook = ({front, switchFunc, setRender,trimInit}) => {
 		controls.minDistance = 1
 		controls.maxDistance = 300
 
-		window.addEventListener('resize', onWindowResize, false)
+		window.addEventListener('resize', ()=>onWindowResize(camera,renderer), false)
 
 		// 绑定事件处理
 		const interaction = new Interaction(renderer, scene, camera)
 
 		// 初始化车辆
 		const car = new Car(scene)
+		setInstanceCar(car)
 		car.init().then((carScene => {
 			// 车辆模型加载完后，预加载内饰图片
 			trimInit()
@@ -115,7 +119,6 @@ const OutLook = ({front, switchFunc, setRender,trimInit}) => {
 					car.car.add(group)
 					// TODO 镜头移动
 					const leftDoorAnimate = new LeftDoorAnimate(group)
-					console.log('group.position',group.position)
 
 					sprite.on('click', ev => {
 						leftDoorAnimate.play(() => {
@@ -132,8 +135,11 @@ const OutLook = ({front, switchFunc, setRender,trimInit}) => {
 	useEffect(() => {
 		init()
 	}, [])
-
-	return (<canvas ref={mainCanvas} style={{display: front}} id="mainCanvas"/>)
+	return (
+		<div style={{display: front}}>
+			<OutColors car={instanceCar}/>
+			<canvas ref={mainCanvas}  id="mainCanvas"/>
+		</div>)
 }
 
 export {OutLook}

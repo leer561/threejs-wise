@@ -3,22 +3,19 @@ import * as THREE from "three"
 export default {
 	main: [
 		new THREE.MeshStandardMaterial({
-			color: 0xff4400, metalness: 1.0, roughness: 0.2, name: 'orange'
+			color: 0xABABAB, metalness: 0, roughness: 0.3882092, name: 'silver',fog: true,refractionRatio: 0.98,
 		}),
 		new THREE.MeshStandardMaterial({
-			color: 0x001166, metalness: 1.0, roughness: 0.2, name: 'blue'
+			color: 0x888888, metalness: 0, roughness: 0.3882092, name: 'white',fog: true,refractionRatio: 0.98
 		}),
 		new THREE.MeshStandardMaterial({
-			color: 0x990000, metalness: 1.0, roughness: 0.2, name: 'red'
+			color: 0x00153f, metalness: 0, roughness:0.3882092, name: 'darkBlue',fog: true,refractionRatio: 0.98
 		}),
 		new THREE.MeshStandardMaterial({
-			color: 0x000000, metalness: 1.0, roughness: 0.4, name: 'black'
+			color: 0x1650BE, metalness: 0, roughness: 0.3882092, name: 'blue',fog: true,refractionRatio: 0.98
 		}),
 		new THREE.MeshStandardMaterial({
-			color: 0xfafafa, metalness: 0.1, roughness: 0.2, name: 'white'
-		}),
-		new THREE.MeshStandardMaterial({
-			color: 0xffffff, metalness: 1.0, roughness: 0.2, name: 'metallic'
+			color: 0x917F71, metalness: 0, roughness: 0.3882092, name: 'gold',fog: true,refractionRatio: 0.98
 		}),
 	],
 	glass: [

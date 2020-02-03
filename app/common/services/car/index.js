@@ -118,7 +118,6 @@ export class Car {
 					shadow.renderOrder = 2
 					this.car.add(shadow)
 
-					this.updateMaterials()
 					this.materialWheels()
 					this.renderGlass()
 					// 尾灯
@@ -136,16 +135,6 @@ export class Car {
 
 	}
 
-	// // 开车门动画
-	// animated(switchFunc){
-	// 	// 找到前门
-	// 	const group = new THREE.Group()
-	// 	// 添加一个父级网格 设置透明
-	// 	this.carParts.leftDoor.forEach(part =>group.add(part))
-	// 	this.car.add(group)
-	// 	const leftDoorAnimate = new LeftDoorAnimate(group)
-	// 	leftDoorAnimate.play(() => switchFunc())
-	// }
 
 	// 增加车轮纹理
 	materialWheels () {
@@ -175,12 +164,8 @@ export class Car {
 	}
 
 	// 渲染车辆
-	updateMaterials (){
-		// const bodyMat = materialsLib.main[4]
-		// const glassMouldingMat = materialsLib.glassMoulding[0]
-		//
-		// carParts.body.forEach(part => part.material = bodyMat)
-		// carParts.glassMoulding.forEach(part => part.material = glassMouldingMat)
+	updateMaterials (bodyMat){
+		this.carParts.body.forEach(part => part.material = bodyMat)
 	}
 
 	// 开灯
