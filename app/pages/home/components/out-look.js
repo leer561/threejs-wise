@@ -1,7 +1,6 @@
 // 车辆外观所用的组件
 
 import * as THREE from "three"
-import Stats from 'three/examples/jsm/libs/stats.module.js'
 import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
 import quarry_01_1k from "../../../assets/images/quarry_01_1k.hdr"
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
@@ -13,37 +12,15 @@ import dot_orange from "../../../assets/images/dot_orange.png"
 
 const textureLoader = new THREE.TextureLoader()
 
-const OutLook = ({front,switchFunc}) => {
+const OutLook = ({front, switchFunc, setRender}) => {
 	// 外观绘图
 	const mainCanvas = useRef()
 
 	// 车辆全局场景
 	let renderer, scene, camera, controls, envMap, grid, carParts, animationFrameId, stats
 
-	// 渲染函数
-	const render = () => {
-		animationFrameId = requestAnimationFrame(render)
-		const time = -performance.now() / 1000
-
-		if (carParts && carParts.wheels) {
-			for (let i = 0; i < carParts.wheels.length; i++) {
-				carParts.wheels[i].rotation.x = -(time * Math.PI)
-			}
-		}
-
-		if (stats) {
-			stats.update()
-		}
-		grid.position.z = (time) % 5
-		renderer.render(scene, camera)
-	}
-
 	// 初始化
 	const init = () => {
-		const container = document.createElement('div')
-		document.body.appendChild(container)
-		stats = new Stats()
-		container.appendChild(stats.dom)
 
 		// 相机
 		camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 200)
@@ -70,9 +47,15 @@ const OutLook = ({front,switchFunc}) => {
 		renderer = new THREE.WebGLRenderer({antialias: true, canvas: mainCanvas.current})
 		renderer.setPixelRatio(window.devicePixelRatio)
 		renderer.setSize(window.innerWidth, window.innerHeight)
-		container.appendChild(renderer.domElement)
+		//container.appendChild(renderer.domElement)
 		renderer.outputEncoding = THREE.sRGBEncoding
 		renderer.toneMapping = THREE.ACESFilmicToneMapping
+
+		// 设置渲染数据
+		setRender({
+			name: 'car',
+			value: {scene, grid, camera,renderer}
+		})
 
 		// 处理器
 		const pmremGenerator = new THREE.PMREMGenerator(renderer)
@@ -98,8 +81,14 @@ const OutLook = ({front,switchFunc}) => {
 		const interaction = new Interaction(renderer, scene, camera)
 
 		// 初始化车辆
-		const car = new Car(scene,switchFunc)
-		car.init().then((carScene=>{
+		const car = new Car(scene)
+		car.init().then((carScene => {
+			// 再次设置渲染数据,增加轮子
+			setRender({
+				name: 'car',
+				value: {scene, grid, camera,renderer,wheels:car.carParts.wheels}
+			})
+
 			const {children} = carScene
 			// 遍历处理零件
 			for (let obj of children) {
@@ -111,8 +100,8 @@ const OutLook = ({front,switchFunc}) => {
 					sprite.position.set(92, 87, 0)
 					sprite.scale.set(12, 12, 1.0)
 					obj.add(sprite)
-					sprite.on('click', ev=> {
-						car.animated(()=>{
+					sprite.on('click', ev => {
+						car.animated(() => {
 							switchFunc()
 							// TODO 镜头移动
 						})
@@ -120,9 +109,6 @@ const OutLook = ({front,switchFunc}) => {
 				}
 			}
 		}))
-		carParts = car.carParts
-		// 渲染
-		render()
 
 	}
 
