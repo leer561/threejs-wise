@@ -1,6 +1,6 @@
 // 提供车前门动画
 
-export class LeftDoorAnimate {
+class LeftDoorAnimate {
 	constructor(obj) {
 		this.active = false
 		this.data = [
@@ -26,6 +26,7 @@ export class LeftDoorAnimate {
 			this.index = 0
 			clearInterval(this.timer)
 			func()
+			this.reset()
 		}
 	}
 
@@ -33,5 +34,11 @@ export class LeftDoorAnimate {
 		this.active = true
 		this.timer = setInterval(() => this.move(func), 50)
 	}
+	// 复位
+	reset(){
+		this.obj.position.set(0, 0, 0)
+		this.obj.rotateY(1.29999)
+	}
 }
 
+export {LeftDoorAnimate}

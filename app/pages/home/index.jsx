@@ -2,6 +2,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 import {OutLook} from './components/out-look'
 import {Trim} from "./components/trim"
+import {ShowCar} from "./components/show-car"
 
 // 首页组件
 const Home = () => {
@@ -13,7 +14,7 @@ const Home = () => {
 	}
 
 	const carTrim = useRef()
-	
+
 	// 绘图cancans变量切换
 	const [front, setFront] = useState(true)
 
@@ -63,15 +64,16 @@ const Home = () => {
 	// 挂载后
 	useEffect(() => {
 		init()
-		carTrim.current.init()
 	}, [carTrim])
 
 	return (
 		<div>
 			<OutLook switchFunc={() => setFront(false)} front={front ? 'block' : 'none'}
 					 setRender={data => setRender(data)}
+					 trimInit = {()=>carTrim.current.init()}
 			/>
 			<Trim front={front ? 'none' : 'block'} ref={carTrim} setRender={data => setRender(data)}/>
+			<ShowCar front={front ? 'none' : 'block'} switchFunc={() => setFront(true)}/>
 		</div>
 	)
 }

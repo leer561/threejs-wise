@@ -2,17 +2,21 @@
 
 import * as THREE from "three"
 import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
-import quarry_01_1k from "../../../assets/images/quarry_01_1k.hdr"
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import {Interaction} from "three.interaction"
 
-import {Car} from '../../../common/services/car'
+// 素材
+import quarry_01_1k from "../../../assets/images/quarry_01_1k.hdr"
 import {onWindowResize} from '../../../common/services/window-resize'
 import dot_orange from "../../../assets/images/dot_orange.png"
 
+// 其他
+import {Car} from '../../../common/services/car'
+import {LeftDoorAnimate} from './left-door-animate'
+
 const textureLoader = new THREE.TextureLoader()
 
-const OutLook = ({front, switchFunc, setRender}) => {
+const OutLook = ({front, switchFunc, setRender,trimInit}) => {
 	// 外观绘图
 	const mainCanvas = useRef()
 
@@ -83,6 +87,8 @@ const OutLook = ({front, switchFunc, setRender}) => {
 		// 初始化车辆
 		const car = new Car(scene)
 		car.init().then((carScene => {
+			// 车辆模型加载完后，预加载内饰图片
+			trimInit()
 			// 再次设置渲染数据,增加轮子
 			setRender({
 				name: 'car',
@@ -100,10 +106,20 @@ const OutLook = ({front, switchFunc, setRender}) => {
 					sprite.position.set(92, 87, 0)
 					sprite.scale.set(12, 12, 1.0)
 					obj.add(sprite)
+
+					// 添加动画类
+					const group = new THREE.Group()
+
+					// 添加一个父级网格 设置透明
+					car.carParts.leftDoor.forEach(part =>group.add(part))
+					car.car.add(group)
+					// TODO 镜头移动
+					const leftDoorAnimate = new LeftDoorAnimate(group)
+					console.log('group.position',group.position)
+
 					sprite.on('click', ev => {
-						car.animated(() => {
+						leftDoorAnimate.play(() => {
 							switchFunc()
-							// TODO 镜头移动
 						})
 					})
 				}

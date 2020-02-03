@@ -17,7 +17,7 @@ import * as carParts from './util'
 import material from "./material"
 import JFC_Tire from "../../../assets/models/JFC_Tire.jpg"
 
-import {LeftDoorAnimate} from './left-door'
+
 const loader = new GLTFLoader()
 const textureLoader = new THREE.TextureLoader()
 
@@ -136,16 +136,16 @@ export class Car {
 
 	}
 
-	// 开车门动画
-	animated(switchFunc){
-		// 找到前门
-		const group = new THREE.Group()
-		// 添加一个父级网格 设置透明
-		this.carParts.leftDoor.forEach(part =>group.add(part))
-		this.car.add(group)
-		const leftDoorAnimate = new LeftDoorAnimate(group)
-		leftDoorAnimate.play(() => switchFunc())
-	}
+	// // 开车门动画
+	// animated(switchFunc){
+	// 	// 找到前门
+	// 	const group = new THREE.Group()
+	// 	// 添加一个父级网格 设置透明
+	// 	this.carParts.leftDoor.forEach(part =>group.add(part))
+	// 	this.car.add(group)
+	// 	const leftDoorAnimate = new LeftDoorAnimate(group)
+	// 	leftDoorAnimate.play(() => switchFunc())
+	// }
 
 	// 增加车轮纹理
 	materialWheels () {
