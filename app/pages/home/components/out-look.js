@@ -10,11 +10,13 @@ import dot_orange from "../../../assets/images/dot_orange.png"
 import venice_sunset_1k from '../../../assets/images/venice_sunset_1k.hdr'
 import quarry from '../../../assets/images/quarry_01_1k.hdr'
 
+
 // 其他
 import {Car} from '../../../common/services/car'
 import {LeftDoorAnimate} from './left-door-animate'
 import {OutColors} from "./out-colors"
-import groundMap from "../../../assets/images/ground.jpg"
+import {LightSwitch} from "./light-switch"
+
 const textureLoader = new THREE.TextureLoader()
 
 const OutLook = ({front, switchFunc, setRender, trimInit}) => {
@@ -114,7 +116,7 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 		const interaction = new Interaction(renderer, scene, camera)
 
 		//初始化车辆
-		const car = new Car(scene)
+		const car = new Car(scene,pmremGenerator)
 		setInstanceCar(car)
 		car.init().then((carScene => {
 			// 整体缩放模型大小
@@ -168,6 +170,7 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 	return (
 		<div style={{display: front}}>
 			<OutColors car={instanceCar}/>
+			<LightSwitch car={instanceCar}/>
 			<canvas ref={mainCanvas} id="mainCanvas"/>
 		</div>)
 }

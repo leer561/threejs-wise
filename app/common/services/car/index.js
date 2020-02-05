@@ -6,31 +6,33 @@ import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
 import carGltf from "../../../assets/gltf/gltf.gltf"
 import carBin from "../../../assets/gltf/gltf.bin"
 import shadowImage from "../../../assets/images/ferrari_ao.png"
-import LightOff from '../../../assets/models/light_off.png'
-import LightOn from '../../../assets/models/light_on.png'
 import Glass_baseColor from '../../../assets/gltf/Glass_baseColor.png'
 import Tire_baseColor from '../../../assets/gltf/Tire_baseColor.png'
 import light_baseColor from '../../../assets/gltf/light_baseColor.png'
-
+import LightOff from '../../../assets/gltf/light_off.png'
+import LightOn from '../../../assets/gltf/light_on.png'
+import venice_sunset_off from '../../../assets/images/venice_sunset_off.hdr'
+import venice_sunset_1k from '../../../assets/images/venice_sunset_1k.hdr'
 
 import * as carParts from './util'
 import material from "./material"
 import JFC_Tire from "../../../assets/models/JFC_Tire.jpg"
-
+import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
 
 const loader = new GLTFLoader()
 const textureLoader = new THREE.TextureLoader()
 
 export class Car {
-	constructor(scene) {
+	constructor(scene, pmremGenerator) {
 		this.car = null
 		this.carParts = carParts.partsArray
 		this.scene = scene
+		this.pmremGenerator = pmremGenerator
 	}
 
 	// 初始化加载模型
-	init(){
-		return new Promise((resolve, reject)=>{
+	init() {
+		return new Promise((resolve, reject) => {
 			loader.load(carGltf, object => {
 
 					// 处理窗户镀铬
@@ -119,7 +121,7 @@ export class Car {
 
 					this.materialWheels()
 					this.renderGlass()
-					this.updateMaterials(material.main[4])
+					this.updateMaterials(material.main[1])
 					// 尾灯
 					this.scene.add(this.car)
 					resolve(this.car)
@@ -135,9 +137,8 @@ export class Car {
 
 	}
 
-
 	// 增加车轮纹理
-	materialWheels () {
+	materialWheels() {
 		textureLoader.load(JFC_Tire, texture => {
 			texture.wrapS = texture.wrapT = THREE.RepeatWrapping
 			//texture.repeat = THREE.RepeatWrapping
@@ -155,7 +156,7 @@ export class Car {
 	}
 
 	// 渲染玻璃
-	renderGlass  () {
+	renderGlass() {
 		// 渲染玻璃
 		this.carParts.glass.forEach(part => {
 			part.material.transparent = true
@@ -164,18 +165,53 @@ export class Car {
 	}
 
 	// 渲染车辆
-	updateMaterials (bodyMat){
+	updateMaterials(bodyMat) {
 		this.carParts.body.forEach(part => part.material = bodyMat)
 	}
 
 	// 开灯
-	lightOn = () => {
-		// 处理尾灯贴图
-		textureLoader.load(LightOn, texture => {
-			texture.encoding = THREE.sRGBEncoding
-			console.log('carParts.lights.', carParts.lights)
-			this.carParts.lights.forEach(part => part.material.map.image  = texture.image)
-		})
+	lightSwitch = (switchData) => {
+
+		// 处理尾灯贴图 true为开灯
+		if (switchData) {
+			textureLoader.load(LightOn, texture => {
+				console.log('this.carParts.lights', this.carParts.lights)
+				texture.encoding = THREE.sRGBEncoding
+				this.carParts.lights.forEach(part => {
+					part.material.map.image = texture.image
+					part.material.map.needsUpdate = true
+				})
+			})
+			new RGBELoader()
+				.setDataType(THREE.UnsignedByteType)
+				.load(venice_sunset_off,  (hdrEquirect)=> {
+					const hdrCubeRenderTarget = this.pmremGenerator.fromEquirectangular(hdrEquirect)
+					hdrEquirect.dispose()
+					this.pmremGenerator.dispose()
+
+					//scene.background = hdrCubeRenderTarget.texture
+					this.scene.environment = hdrCubeRenderTarget.texture
+				})
+		} else {
+			textureLoader.load(LightOff, texture => {
+				texture.encoding = THREE.sRGBEncoding
+				this.carParts.lights.forEach(part => {
+					part.material.map.image = texture.image
+					part.material.map.needsUpdate = true
+				})
+			})
+			new RGBELoader()
+				.setDataType(THREE.UnsignedByteType)
+				.load(venice_sunset_1k,  (hdrEquirect)=> {
+					const hdrCubeRenderTarget = this.pmremGenerator.fromEquirectangular(hdrEquirect)
+					hdrEquirect.dispose()
+					this.pmremGenerator.dispose()
+
+					//scene.background = hdrCubeRenderTarget.texture
+					this.scene.environment = hdrCubeRenderTarget.texture
+				})
+		}
+
 	}
 }
 
