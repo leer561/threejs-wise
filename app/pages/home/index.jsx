@@ -28,21 +28,15 @@ const Home = () => {
 		if (car) {
 			const {grid, renderer, scene, camera, wheels,controls} = car
 			controls.update()
-			//console.log('scene',scene)
-			// if(scene.environment){
-			// 	console.log('controls.getAzimuthalAngle()',controls.getAzimuthalAngle())
-			// 	console.log('controls.getPolarAngle()',controls.getPolarAngle())
-			// 	scene.environment.rotation = controls.getAzimuthalAngle()
-			// }
-			grid.position.z = (time) % 5
+			grid.position.z = (time) % 100
 			renderer.render(scene, camera)
 			// 车轮部分
-			// if (wheels) {
-			// 	const wheelsLength = wheels.length
-			// 	for (let i = 0; i < wheelsLength; i++) {
-			// 		wheels[i].rotation.x = -(time * Math.PI)
-			// 	}
-			// }
+			if (wheels) {
+				const wheelsLength = wheels.length
+				for (let i = 0; i < wheelsLength; i++) {
+					wheels[i].rotation.x = -(time * Math.PI)
+				}
+			}
 		}
 		if(stats){
 			stats.update()

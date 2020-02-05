@@ -32,7 +32,7 @@ export class Car {
 	init(){
 		return new Promise((resolve, reject)=>{
 			loader.load(carGltf, object => {
-					console.log('object', object)
+
 					// 处理窗户镀铬
 					const grayWhiteMat = material.grayWhiteParts[0]
 					this.car = object.scene
@@ -119,6 +119,7 @@ export class Car {
 
 					this.materialWheels()
 					this.renderGlass()
+					this.updateMaterials(material.main[4])
 					// 尾灯
 					this.scene.add(this.car)
 					resolve(this.car)

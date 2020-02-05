@@ -8,10 +8,13 @@ import {Interaction} from "three.interaction"
 import {onWindowResize} from '../../../common/services/window-resize'
 import dot_orange from "../../../assets/images/dot_orange.png"
 import venice_sunset_1k from '../../../assets/images/venice_sunset_1k.hdr'
+import quarry from '../../../assets/images/quarry_01_1k.hdr'
+
 // 其他
 import {Car} from '../../../common/services/car'
 import {LeftDoorAnimate} from './left-door-animate'
 import {OutColors} from "./out-colors"
+import groundMap from "../../../assets/images/ground.jpg"
 const textureLoader = new THREE.TextureLoader()
 
 const OutLook = ({front, switchFunc, setRender, trimInit}) => {
@@ -27,22 +30,24 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 	const init = () => {
 
 		// 相机
-		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000)
-		camera.position.set(0, 500, 0)
-		camera.lookAt(new THREE.Vector3(0,0,0))
-		const helper = new THREE.CameraHelper( camera )
+		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000)
+		camera.position.set(60,20, 40)
+		//const helper = new THREE.CameraHelper( camera )
 		// 场景
 		scene = new THREE.Scene()
-		scene.add(new THREE.AxesHelper(500))
-		scene.add( helper )
+		//scene.add(new THREE.AxesHelper(500))
+		//scene.add( helper )
+		camera.lookAt( scene.position )
+
 		const ground = new THREE.Mesh(
-			new THREE.PlaneBufferGeometry(1000, 4000),
-			new THREE.MeshBasicMaterial({color: 0x6e6a62, depthWrite: false})
+			new THREE.PlaneBufferGeometry( 5000, 5000 ),
+			new THREE.MeshBasicMaterial( { color: 0x6e6a62, depthWrite: false } )
 		)
-		ground.rotation.x = -Math.PI / 2
+		ground.rotation.x = - Math.PI / 2
 		ground.renderOrder = 1
-		//scene.add(ground)
-		grid = new THREE.GridHelper(1000, 80, 0x000000, 0x000000)
+		scene.add( ground )
+
+		grid = new THREE.GridHelper(5000, 80, 0x000000, 0x000000)
 		grid.material.opacity = 0.1
 		grid.material.depthWrite = false
 		grid.material.transparent = true
@@ -61,12 +66,22 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 		pmremGenerator.compileEquirectangularShader()
 		new RGBELoader()
 			.setDataType(THREE.UnsignedByteType)
-			.load(venice_sunset_1k, function (hdrEquirect) {
+			.load(quarry, function (hdrEquirect) {
 				const hdrCubeRenderTarget = pmremGenerator.fromEquirectangular(hdrEquirect)
 				hdrEquirect.dispose()
 				pmremGenerator.dispose()
 
 				scene.background = hdrCubeRenderTarget.texture
+				//scene.environment = hdrCubeRenderTarget.texture
+			})
+		new RGBELoader()
+			.setDataType(THREE.UnsignedByteType)
+			.load(venice_sunset_1k, function (hdrEquirect) {
+				const hdrCubeRenderTarget = pmremGenerator.fromEquirectangular(hdrEquirect)
+				hdrEquirect.dispose()
+				pmremGenerator.dispose()
+
+				//scene.background = hdrCubeRenderTarget.texture
 				scene.environment = hdrCubeRenderTarget.texture
 			})
 
@@ -86,7 +101,7 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 		// 	0,
 		// 	-200
 		// )
-		//controls.target.set(0, 0, 0)
+		controls.target.set(0, 0, 0)
 		// 设置渲染数据
 		setRender({
 			name: 'car',
@@ -103,8 +118,7 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 		setInstanceCar(car)
 		car.init().then((carScene => {
 			// 整体缩放模型大小
-			car.car.scale.set(0.3, 0.3, 0.3)
-			car.car.position.set(0, 0, 0)
+			car.car.scale.set(0.12, 0.12, 0.12)
 			console.log('scene', scene)
 			//controls.target.set(100, 190, 0)
 			// 车辆模型加载完后，预加载内饰图片
