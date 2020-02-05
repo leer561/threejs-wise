@@ -104,7 +104,6 @@ export class Car {
 						}
 
 					}
-					this.car.scale.set(0.01, 0.01, 0.01)
 
 					// shadow
 					const texture = textureLoader.load(shadowImage)

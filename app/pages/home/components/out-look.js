@@ -4,47 +4,45 @@ import * as THREE from "three"
 import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import {Interaction} from "three.interaction"
-
 // 素材
-import quarry_01_1k from "../../../assets/images/quarry_01_1k.hdr"
 import {onWindowResize} from '../../../common/services/window-resize'
 import dot_orange from "../../../assets/images/dot_orange.png"
-
+import venice_sunset_1k from '../../../assets/images/venice_sunset_1k.hdr'
 // 其他
 import {Car} from '../../../common/services/car'
 import {LeftDoorAnimate} from './left-door-animate'
 import {OutColors} from "./out-colors"
-
 const textureLoader = new THREE.TextureLoader()
 
-const OutLook = ({front, switchFunc, setRender,trimInit}) => {
+const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 	// 设置sate
 	const [instanceCar, setInstanceCar] = useState(null)
 	// 外观绘图
 	const mainCanvas = useRef()
 
 	// 车辆全局场景
-	let renderer, scene, camera, controls, envMap, grid
+	let renderer, scene, camera, controls, grid
 
 	// 初始化
 	const init = () => {
 
 		// 相机
-		camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 200)
-		camera.position.set(5, 2.5, 5)
-
+		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000)
+		camera.position.set(0, 500, 0)
+		camera.lookAt(new THREE.Vector3(0,0,0))
+		const helper = new THREE.CameraHelper( camera )
 		// 场景
 		scene = new THREE.Scene()
-		// scene.fog = new THREE.Fog( 0xd7cbb1, 1, 80 )
-
+		scene.add(new THREE.AxesHelper(500))
+		scene.add( helper )
 		const ground = new THREE.Mesh(
-			new THREE.PlaneBufferGeometry(400, 400),
+			new THREE.PlaneBufferGeometry(1000, 4000),
 			new THREE.MeshBasicMaterial({color: 0x6e6a62, depthWrite: false})
 		)
 		ground.rotation.x = -Math.PI / 2
 		ground.renderOrder = 1
-		scene.add(ground)
-		grid = new THREE.GridHelper(400, 80, 0x000000, 0x000000)
+		//scene.add(ground)
+		grid = new THREE.GridHelper(1000, 80, 0x000000, 0x000000)
 		grid.material.opacity = 0.1
 		grid.material.depthWrite = false
 		grid.material.transparent = true
@@ -58,45 +56,63 @@ const OutLook = ({front, switchFunc, setRender,trimInit}) => {
 		renderer.outputEncoding = THREE.sRGBEncoding
 		renderer.toneMapping = THREE.ACESFilmicToneMapping
 
-		// 设置渲染数据
-		setRender({
-			name: 'car',
-			value: {scene, grid, camera,renderer}
-		})
-
 		// 处理器
 		const pmremGenerator = new THREE.PMREMGenerator(renderer)
 		pmremGenerator.compileEquirectangularShader()
 		new RGBELoader()
 			.setDataType(THREE.UnsignedByteType)
-			.load(quarry_01_1k, function (texture) {
-				envMap = pmremGenerator.fromEquirectangular(texture).texture
+			.load(venice_sunset_1k, function (hdrEquirect) {
+				const hdrCubeRenderTarget = pmremGenerator.fromEquirectangular(hdrEquirect)
+				hdrEquirect.dispose()
 				pmremGenerator.dispose()
-				scene.background = envMap
-				scene.environment = envMap
+
+				scene.background = hdrCubeRenderTarget.texture
+				scene.environment = hdrCubeRenderTarget.texture
 			})
 
-		// 处理镜头
+		// 处理控制器
 		controls = new OrbitControls(camera, renderer.domElement)
-		controls.maxPolarAngle = Math.PI * 0.5
-		controls.minDistance = 1
-		controls.maxDistance = 300
+		//controls.maxPolarAngle = Math.PI * 0.5
+		//controls.minDistance = 1
+		//controls.maxDistance = 300
+		// controls.enableZoom = true
+		// controls.enablePan = false
+		// controls.enableDamping = true
+		// controls.dampingFactor = 0.07
+		//controls.screenSpacePanning = false
+		// controls.rotateSpeed = -0.26
+		// controls.center =  new THREE.Vector3(
+		// 	100,
+		// 	0,
+		// 	-200
+		// )
+		//controls.target.set(0, 0, 0)
+		// 设置渲染数据
+		setRender({
+			name: 'car',
+			value: {scene, grid, camera, renderer, controls}
+		})
 
-		window.addEventListener('resize', ()=>onWindowResize(camera,renderer), false)
+		window.addEventListener('resize', () => onWindowResize(camera, renderer), false)
 
 		// 绑定事件处理
 		const interaction = new Interaction(renderer, scene, camera)
 
-		// 初始化车辆
+		//初始化车辆
 		const car = new Car(scene)
 		setInstanceCar(car)
 		car.init().then((carScene => {
+			// 整体缩放模型大小
+			car.car.scale.set(0.3, 0.3, 0.3)
+			car.car.position.set(0, 0, 0)
+			console.log('scene', scene)
+			//controls.target.set(100, 190, 0)
 			// 车辆模型加载完后，预加载内饰图片
 			trimInit()
 			// 再次设置渲染数据,增加轮子
 			setRender({
 				name: 'car',
-				value: {scene, grid, camera,renderer,wheels:car.carParts.wheels}
+				value: {scene, grid, camera, renderer, controls, wheels: car.carParts.wheels}
 			})
 
 			const {children} = carScene
@@ -115,7 +131,7 @@ const OutLook = ({front, switchFunc, setRender,trimInit}) => {
 					const group = new THREE.Group()
 
 					// 添加一个父级网格 设置透明
-					car.carParts.leftDoor.forEach(part =>group.add(part))
+					car.carParts.leftDoor.forEach(part => group.add(part))
 					car.car.add(group)
 					// TODO 镜头移动
 					const leftDoorAnimate = new LeftDoorAnimate(group)
@@ -138,7 +154,7 @@ const OutLook = ({front, switchFunc, setRender,trimInit}) => {
 	return (
 		<div style={{display: front}}>
 			<OutColors car={instanceCar}/>
-			<canvas ref={mainCanvas}  id="mainCanvas"/>
+			<canvas ref={mainCanvas} id="mainCanvas"/>
 		</div>)
 }
 
