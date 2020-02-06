@@ -6,7 +6,7 @@ export default {
 			color: 0x7a7975, metalness: 1, roughness:0.3, name: 'silver', fog: true, refractionRatio: 0.98,
 		}),
 		new THREE.MeshStandardMaterial({
-			color: 0xcccccc, metalness: 0.6, roughness: 0.3882092, name: 'white', fog: true, refractionRatio: 0.98
+			color: 0xeeeeee, metalness: 0.6, roughness: 0.3882092, name: 'white', fog: true, refractionRatio: 0.98
 		}),
 		new THREE.MeshStandardMaterial({
 			color: 0x121f2e, metalness: 1, roughness: 0.3, name: 'darkBlue', fog: true, refractionRatio: 0.98

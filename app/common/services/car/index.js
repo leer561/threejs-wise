@@ -11,23 +11,21 @@ import Tire_baseColor from '../../../assets/gltf/Tire_baseColor.png'
 import light_baseColor from '../../../assets/gltf/light_baseColor.png'
 import LightOff from '../../../assets/gltf/light_off.png'
 import LightOn from '../../../assets/gltf/light_on.png'
-import venice_sunset_off from '../../../assets/images/venice_sunset_off.hdr'
-import venice_sunset_1k from '../../../assets/images/venice_sunset_1k.hdr'
 
 import * as carParts from './util'
 import material from "./material"
 import JFC_Tire from "../../../assets/models/JFC_Tire.jpg"
-import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
 
 const loader = new GLTFLoader()
 const textureLoader = new THREE.TextureLoader()
 
 export class Car {
-	constructor(scene, pmremGenerator) {
+	constructor(scene) {
 		this.car = null
 		this.carParts = carParts.partsArray
 		this.scene = scene
-		this.pmremGenerator = pmremGenerator
+		this.light = {} // 开关灯贴图素材
+		this.shadow = null //关灯时隐藏阴影
 	}
 
 	// 初始化加载模型
@@ -59,6 +57,7 @@ export class Car {
 						if (carParts.carLight[obj.name]) {
 							// 添加车身
 							this.carParts.lights.push(obj)
+
 						}
 
 						// 车玻璃
@@ -109,15 +108,15 @@ export class Car {
 
 					// shadow
 					const texture = textureLoader.load(shadowImage)
-					const shadow = new THREE.Mesh(
+					this.shadow = new THREE.Mesh(
 						new THREE.PlaneBufferGeometry(0.61 * 420, 1.4 * 400),
 						new THREE.MeshBasicMaterial({
 							map: texture, opacity: 0.4, transparent: true
 						})
 					)
-					shadow.rotation.x = -Math.PI / 2
-					shadow.renderOrder = 2
-					this.car.add(shadow)
+					this.shadow.rotation.x = -Math.PI / 2
+					this.shadow.renderOrder = 2
+					this.car.add(this.shadow)
 
 					this.materialWheels()
 					this.renderGlass()
@@ -125,6 +124,8 @@ export class Car {
 					// 尾灯
 					this.scene.add(this.car)
 					resolve(this.car)
+					this.preload()
+
 				},
 				function (xhr) {
 					console.log((xhr.loaded / xhr.total * 100) + '% loaded')
@@ -169,48 +170,27 @@ export class Car {
 		this.carParts.body.forEach(part => part.material = bodyMat)
 	}
 
+	// 预加载开关灯素材
+	preload() {
+		textureLoader.load(LightOn, texture => {
+			texture.encoding = THREE.sRGBEncoding
+			this.light.on = texture
+		})
+		textureLoader.load(LightOff, texture => {
+			texture.encoding = THREE.sRGBEncoding
+			this.light.off = texture
+		})
+	}
+
 	// 开灯
-	lightSwitch = (switchData) => {
-
+	lightSwitch(switchData) {
 		// 处理尾灯贴图 true为开灯
-		if (switchData) {
-			textureLoader.load(LightOn, texture => {
-				console.log('this.carParts.lights', this.carParts.lights)
-				texture.encoding = THREE.sRGBEncoding
-				this.carParts.lights.forEach(part => {
-					part.material.map.image = texture.image
-					part.material.map.needsUpdate = true
-				})
-			})
-			new RGBELoader()
-				.setDataType(THREE.UnsignedByteType)
-				.load(venice_sunset_off,  (hdrEquirect)=> {
-					const hdrCubeRenderTarget = this.pmremGenerator.fromEquirectangular(hdrEquirect)
-					hdrEquirect.dispose()
-					this.pmremGenerator.dispose()
-
-					//scene.background = hdrCubeRenderTarget.texture
-					this.scene.environment = hdrCubeRenderTarget.texture
-				})
-		} else {
-			textureLoader.load(LightOff, texture => {
-				texture.encoding = THREE.sRGBEncoding
-				this.carParts.lights.forEach(part => {
-					part.material.map.image = texture.image
-					part.material.map.needsUpdate = true
-				})
-			})
-			new RGBELoader()
-				.setDataType(THREE.UnsignedByteType)
-				.load(venice_sunset_1k,  (hdrEquirect)=> {
-					const hdrCubeRenderTarget = this.pmremGenerator.fromEquirectangular(hdrEquirect)
-					hdrEquirect.dispose()
-					this.pmremGenerator.dispose()
-
-					//scene.background = hdrCubeRenderTarget.texture
-					this.scene.environment = hdrCubeRenderTarget.texture
-				})
-		}
+		const lightTexture = switchData ? this.light.on : this.light.off
+		this.shadow.visible = !switchData
+		this.carParts.lights.forEach(part => {
+			part.material.map.image = lightTexture.image
+			part.material.map.needsUpdate = true
+		})
 
 	}
 }
