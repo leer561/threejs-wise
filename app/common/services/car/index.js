@@ -11,7 +11,6 @@ import Tire_baseColor from '../../../assets/gltf/Tire_baseColor.png'
 import light_baseColor from '../../../assets/gltf/light_baseColor.png'
 import LightOff from '../../../assets/gltf/light_off.png'
 import LightOn from '../../../assets/gltf/light_on.png'
-import jinshu from '../../../assets/images/JFC_Rim_Int.jpg'
 
 import * as carParts from './util'
 import material from "./material"
@@ -174,10 +173,7 @@ export class Car {
 			texture.encoding = THREE.sRGBEncoding
 			this.light.off = texture
 		})
-		// textureLoader.load(jinshu, texture => {
-		// 	texture.encoding = THREE.sRGBEncoding
-		// 	material.main.forEach(mat=>mat.normalMap  = texture)
-		// })
+
 	}
 
 	// 开灯
