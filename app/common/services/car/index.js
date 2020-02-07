@@ -141,16 +141,11 @@ export class Car {
 	// 增加车轮纹理
 	materialWheels() {
 		textureLoader.load(JFC_Tire, texture => {
-			texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-			// 载入另一个凹凸纹理
-			const mat = new THREE.MeshStandardMaterial({
-				map: texture,
-				color: 0x222222,
-				emissive: 0x333333,
-				emissiveMap: texture
+			this.carParts.tire.forEach(part => {
+				part.material.bumpMap = texture
+				part.material.bumpScale = 0.2
+				part.material.needsUpdate = true
 			})
-
-			this.carParts.tire.forEach(part => part.material = mat)
 		})
 	}
 
