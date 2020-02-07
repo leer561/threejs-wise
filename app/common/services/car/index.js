@@ -11,6 +11,7 @@ import Tire_baseColor from '../../../assets/gltf/Tire_baseColor.png'
 import light_baseColor from '../../../assets/gltf/light_baseColor.png'
 import LightOff from '../../../assets/gltf/light_off.png'
 import LightOn from '../../../assets/gltf/light_on.png'
+import zhongkong from '../../../assets/gltf/BT_zhongkong_Diffuse.png'
 
 import * as carParts from './util'
 import material from "./material"
@@ -26,6 +27,7 @@ export class Car {
 		this.scene = scene
 		this.light = {} // 开关灯贴图素材
 		this.shadow = null //关灯时隐藏阴影
+		this.zhongkong = null
 	}
 
 	// 初始化加载模型
@@ -64,6 +66,12 @@ export class Car {
 						if (carParts.carGlass[obj.name]) {
 							// 添加车身
 							this.carParts.glass.push(obj)
+						}
+
+						// 中控
+						if (obj.name==='zhongkong') {
+							// 添加车身
+							this.zhongkong = obj
 						}
 
 						// 灰色偏白色部件
@@ -120,7 +128,7 @@ export class Car {
 
 					this.materialWheels()
 					this.renderGlass()
-					this.updateMaterials(material.main[2])
+					this.updateMaterials(material.main[1])
 					// 尾灯
 					this.scene.add(this.car)
 					resolve(this.car)
@@ -173,7 +181,6 @@ export class Car {
 			texture.encoding = THREE.sRGBEncoding
 			this.light.off = texture
 		})
-
 	}
 
 	// 开灯

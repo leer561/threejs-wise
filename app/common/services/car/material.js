@@ -3,7 +3,7 @@ import * as THREE from "three"
 export default {
 	main: [
 		new THREE.MeshStandardMaterial({
-			color: 0x999ca1, metalness: 0.9, roughness:0.3882092, name: 'silver', fog: true, refractionRatio: 0.98,
+			color: 0x797c7e, metalness: 0.9, roughness:0.3882092, name: 'silver', fog: true, refractionRatio: 0.98,
 		}),
 		new THREE.MeshStandardMaterial({
 			color: 0x666666, metalness: 0, roughness: 0.372519732, name: 'white', fog: true, refractionRatio: 0.98
