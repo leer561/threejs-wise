@@ -18,6 +18,7 @@ import {Car} from '../../../common/services/car'
 import {LeftDoorAnimate} from './left-door-animate'
 import {OutColors} from "./out-colors"
 import {LightSwitch} from "./light-switch"
+import trimButton from "../../../assets/images/interior.png"
 
 const textureLoader = new THREE.TextureLoader()
 
@@ -58,7 +59,7 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 			const geometry = new THREE.PlaneGeometry(512, 512, 10)
 			const material = new THREE.MeshBasicMaterial({
 				map: texture, transparent: true,
-				opacity: 0.3
+				opacity: 0.5
 			})
 			const lightHolder = new THREE.Mesh(geometry, material)
 			setLightHolder(lightHolder)
@@ -73,7 +74,7 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 
 		// 相机
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000)
-		camera.position.set(60, 20, 40)
+		camera.position.set(60, 20, 0)
 		//const helper = new THREE.CameraHelper( camera )
 		// 场景
 		const scene = new THREE.Scene()
@@ -197,7 +198,6 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 					car.car.add(group)
 					// TODO 镜头移动
 					const leftDoorAnimate = new LeftDoorAnimate(group)
-
 					sprite.on('click', ev => {
 						leftDoorAnimate.play(() => {
 							switchFunc()
@@ -220,6 +220,11 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 		lightHolder.visible = signal
 	}
 
+	// 显示内饰
+	const showTrim = () => {
+		switchFunc()
+	}
+
 	// 挂载后
 	useEffect(() => {
 		init()
@@ -229,6 +234,9 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 			<OutColors car={instanceCar}/>
 			<LightSwitch car={instanceCar} changeEnvironment={(signal) => changeEnvironment(signal)}/>
 			<canvas ref={mainCanvas} id="mainCanvas"/>
+			<div id="show-trim" onClick={() => showTrim()}>
+				<img src={trimButton} alt=""/>
+			</div>
 		</div>)
 }
 

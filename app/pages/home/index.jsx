@@ -26,7 +26,7 @@ const Home = () => {
 
 		// 车辆部分
 		if (car) {
-			const {grid, renderer, scene, camera, wheels,controls} = car
+			const {grid, renderer, scene, camera, wheels, controls} = car
 			controls.update()
 			grid.position.z = (time) % 100
 			renderer.render(scene, camera)
@@ -38,12 +38,12 @@ const Home = () => {
 				}
 			}
 		}
-		if(stats){
+		if (stats) {
 			stats.update()
 		}
 
 		if (trim) {
-			const {controlsTrim,sceneTrim,cameraTrim,rendererTrim} = trim
+			const {controlsTrim, sceneTrim, cameraTrim, rendererTrim} = trim
 			controlsTrim.update() // required when damping is enabled
 			rendererTrim.render(sceneTrim, cameraTrim)
 		}
@@ -54,10 +54,10 @@ const Home = () => {
 
 	// 初始化
 	const init = () => {
-		const container = document.createElement('div')
-		document.body.appendChild(container)
-		renderData.stats = new Stats()
-		container.appendChild(renderData.stats.dom)
+		// const container = document.createElement('div')
+		// document.body.appendChild(container)
+		// renderData.stats = new Stats()
+		// container.appendChild(renderData.stats.dom)
 		render()
 	}
 
@@ -70,7 +70,7 @@ const Home = () => {
 		<div>
 			<OutLook switchFunc={() => setFront(false)} front={front ? 'block' : 'none'}
 					 setRender={data => setRender(data)}
-					 trimInit = {()=>carTrim.current.init()}
+					 trimInit={() => carTrim.current.init()}
 			/>
 			<Trim front={front ? 'none' : 'block'} ref={carTrim} setRender={data => setRender(data)}/>
 			<ShowCar front={front ? 'none' : 'block'} switchFunc={() => setFront(true)}/>
