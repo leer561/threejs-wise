@@ -1,7 +1,7 @@
 // 车辆外观相关的处理
 import * as THREE from "three"
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
-
+import {Lensflare, LensflareElement} from 'three/examples/jsm/objects/Lensflare.js'
 // 加载器
 import carGltf from "../../../assets/gltf/gltf.gltf"
 import carBin from "../../../assets/gltf/gltf.bin"
@@ -11,7 +11,7 @@ import Tire_baseColor from '../../../assets/gltf/Tire_baseColor.png'
 import light_baseColor from '../../../assets/gltf/light_baseColor.png'
 import LightOff from '../../../assets/gltf/light_off.png'
 import LightOn from '../../../assets/gltf/light_on.png'
-import zhongkong from '../../../assets/gltf/BT_zhongkong_Diffuse.png'
+import flareFront from '../../../assets/images/flare-front.jpg'
 
 import * as carParts from './util'
 import material from "./material"
@@ -69,8 +69,8 @@ export class Car {
 						}
 
 						// 中控
-						if (obj.name==='zhongkong') {
-							// 添加车身
+						if (obj.name === 'zhongkong') {
+							// 添加中控
 							this.zhongkong = obj
 						}
 
@@ -181,6 +181,30 @@ export class Car {
 			texture.encoding = THREE.sRGBEncoding
 			this.light.off = texture
 		})
+
+		textureLoader.load(flareFront, texture => {
+			this.light.flareFront = texture
+			const light1 = new THREE.PointLight(0xffffff, 10, 6)
+			light1.position.set(8.4, 8.5, 23.7)
+			this.scene.add(light1)
+			const lensFlare = new Lensflare()
+			lensFlare.addElement(new LensflareElement(texture, 2048, 0, light1.color))
+			light1.add(lensFlare)
+			const light2 = new THREE.PointLight(0xffffff, 10, 6)
+			const lensFlare1 = new Lensflare()
+			lensFlare1.addElement(new LensflareElement(texture, 2048, 0, light1.color))
+			light2.add(lensFlare1)
+			light2.position.set(-8, 8.5, 24)
+			const pointLightHelper = new THREE.PointLightHelper(light2, .5)
+			this.scene.add(pointLightHelper)
+			this.scene.add(light2)
+
+			// 暂时隐藏
+			light1.visible = false
+			light2.visible = false
+			this.light.headLight1 = light1
+			this.light.headLight2 = light2
+		})
 	}
 
 	// 开灯
@@ -188,6 +212,8 @@ export class Car {
 		// 处理尾灯贴图 true为开灯
 		const lightTexture = switchData ? this.light.on : this.light.off
 		this.shadow.visible = !switchData
+		this.light.headLight1.visible = switchData
+		this.light.headLight2.visible = switchData
 		this.carParts.lights.forEach(part => {
 			part.material.map.image = lightTexture.image
 			part.material.map.needsUpdate = true
