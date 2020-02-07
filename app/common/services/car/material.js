@@ -3,13 +3,13 @@ import * as THREE from "three"
 export default {
 	main: [
 		new THREE.MeshStandardMaterial({
-			color: 0x7a7975, metalness: 1, roughness:0.3, name: 'silver', fog: true, refractionRatio: 0.98,
+			color: 0x7a7975, metalness: 0.9, roughness:0.3, name: 'silver', fog: true, refractionRatio: 0.98,
 		}),
 		new THREE.MeshStandardMaterial({
 			color: 0xeeeeee, metalness: 0.6, roughness: 0.3882092, name: 'white', fog: true, refractionRatio: 0.98
 		}),
 		new THREE.MeshStandardMaterial({
-			color: 0x121f2e, metalness: 1, roughness: 0.3, name: 'darkBlue', fog: true, refractionRatio: 0.98
+			color: 0x121f2e, metalness: 0.9, roughness: 0.3, name: 'darkBlue', fog: true, refractionRatio: 0.98
 		}),
 		new THREE.MeshStandardMaterial({
 			color: 0x224088, metalness: 0.9, roughness: 0.3, name: 'blue', fog: true, refractionRatio: 0.98

@@ -128,20 +128,13 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 
 		// 处理控制器
 		controls = new OrbitControls(camera, renderer.domElement)
-		//controls.maxPolarAngle = Math.PI * 0.5
-		//controls.minDistance = 1
-		//controls.maxDistance = 300
-		// controls.enableZoom = true
-		// controls.enablePan = false
-		// controls.enableDamping = true
-		// controls.dampingFactor = 0.07
-		//controls.screenSpacePanning = false
-		// controls.rotateSpeed = -0.26
-		// controls.center =  new THREE.Vector3(
-		// 	100,
-		// 	0,
-		// 	-200
-		// )
+		controls.maxPolarAngle = Math.PI * 0.45
+		controls.minPolarAngle  = Math.PI * 0.2
+		controls.minDistance = 50
+		controls.maxDistance = 100
+		controls.enableDamping = true
+		controls.dampingFactor = 0.1
+		controls.rotateSpeed = 0.26
 		controls.target.set(0, 0, 0)
 
 		// 设置渲染数据
@@ -220,7 +213,7 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 	const changeEnvironment = signal => {
 		const backgroundHdr = signal ? hdrCubeRenderOffTarget : hdrCubeRenderTarget
 		const hdrEnv = signal ? hdrEnvironmentOff : hdrEnvironment
-		const groundColor = signal ? 0x090909 : 0x6e6a62
+		const groundColor = signal ? 0x020202 : 0x6e6a62
 		scene.background = backgroundHdr.texture
 		scene.environment = hdrEnv.texture
 		ground.material.color = new THREE.Color(groundColor)

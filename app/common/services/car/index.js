@@ -142,7 +142,6 @@ export class Car {
 	materialWheels() {
 		textureLoader.load(JFC_Tire, texture => {
 			texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-			//texture.repeat = THREE.RepeatWrapping
 			// 载入另一个凹凸纹理
 			const mat = new THREE.MeshStandardMaterial({
 				map: texture,
@@ -151,7 +150,6 @@ export class Car {
 				emissiveMap: texture
 			})
 
-			//const mat =new THREE.MeshLambertMaterial({color: 0x111111})
 			this.carParts.tire.forEach(part => part.material = mat)
 		})
 	}
