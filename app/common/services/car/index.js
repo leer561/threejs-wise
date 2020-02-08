@@ -195,8 +195,6 @@ export class Car {
 			lensFlare1.addElement(new LensflareElement(texture, 2048, 0, light1.color))
 			light2.add(lensFlare1)
 			light2.position.set(-8, 8.5, 24)
-			const pointLightHelper = new THREE.PointLightHelper(light2, .5)
-			this.scene.add(pointLightHelper)
 			this.scene.add(light2)
 
 			// 暂时隐藏
