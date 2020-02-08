@@ -26,6 +26,7 @@ const Home = () => {
 
 		// 车辆部分
 		if (car) {
+			console.log('car')
 			const {grid, renderer, scene, camera, wheels, controls} = car
 			controls.update()
 			grid.position.z = (time) % 100
@@ -43,6 +44,7 @@ const Home = () => {
 		}
 
 		if (trim) {
+			console.log('trim')
 			const {controlsTrim, sceneTrim, cameraTrim, rendererTrim} = trim
 			controlsTrim.update() // required when damping is enabled
 			rendererTrim.render(sceneTrim, cameraTrim)
@@ -54,10 +56,10 @@ const Home = () => {
 
 	// 初始化
 	const init = () => {
-		// const container = document.createElement('div')
-		// document.body.appendChild(container)
-		// renderData.stats = new Stats()
-		// container.appendChild(renderData.stats.dom)
+		const container = document.createElement('div')
+		document.body.appendChild(container)
+		renderData.stats = new Stats()
+		container.appendChild(renderData.stats.dom)
 		render()
 	}
 

@@ -201,11 +201,19 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 					sprite.on('click', ev => {
 						leftDoorAnimate.play(() => {
 							switchFunc()
+							setRender({
+								name: 'car',
+								value: null
+							})
 						})
 					})
 					sprite.on('touchstart', ev => {
 						leftDoorAnimate.play(() => {
 							switchFunc()
+							setRender({
+								name: 'car',
+								value: null
+							})
 						})
 					})
 				}
@@ -227,6 +235,10 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 
 	// 显示内饰
 	const showTrim = () => {
+		setRender({
+			name: 'car',
+			value: null
+		})
 		switchFunc()
 	}
 
