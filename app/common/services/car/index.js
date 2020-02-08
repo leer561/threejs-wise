@@ -1,10 +1,11 @@
 // 车辆外观相关的处理
 import * as THREE from "three"
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader"
+import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader"
 import {Lensflare, LensflareElement} from 'three/examples/jsm/objects/Lensflare.js'
 // 加载器
-import carGltf from "../../../assets/gltf/gltf.gltf"
-import carBin from "../../../assets/gltf/gltf.bin"
+
+import carGltf from "../../../assets/gltf/modelDraco.gltf"
 import shadowImage from "../../../assets/images/ferrari_ao.png"
 import Glass_baseColor from '../../../assets/gltf/Glass_baseColor.png'
 import Tire_baseColor from '../../../assets/gltf/Tire_baseColor.png'
@@ -17,8 +18,13 @@ import * as carParts from './util'
 import material from "./material"
 import JFC_Tire from "../../../assets/models/JFC_Tire.jpg"
 
-const loader = new GLTFLoader()
 const textureLoader = new THREE.TextureLoader()
+const loader = new GLTFLoader()
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath('static/draco/')
+dracoLoader.setDecoderConfig({type: 'object'})
+dracoLoader.preload()
+loader.setDRACOLoader(dracoLoader)
 
 export class Car {
 	constructor(scene) {

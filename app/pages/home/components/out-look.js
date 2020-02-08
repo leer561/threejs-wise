@@ -74,8 +74,8 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 
 		// 相机
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000)
-		camera.position.set(60, 20, 120)
-		//const helper = new THREE.CameraHelper( camera )
+		camera.position.set(30, 20, 60)
+
 		// 场景
 		const scene = new THREE.Scene()
 		setScene(scene)
@@ -131,7 +131,7 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 		controls = new OrbitControls(camera, renderer.domElement)
 		controls.maxPolarAngle = Math.PI * 0.45
 		controls.minPolarAngle  = Math.PI * 0.2
-		controls.minDistance = 70
+		controls.minDistance = 50
 		controls.maxDistance = 100
 		controls.enableDamping = true
 		controls.dampingFactor = 0.1

@@ -41,9 +41,9 @@ module.exports = merge(common, {
 		]
 	},
 	plugins: [
-		new UglifyJsPlugin({
-			sourceMap: true
-		}),
+		// new UglifyJsPlugin({
+		// 	sourceMap: true
+		// }),
 		new webpack.DllReferencePlugin({
 			context: __dirname,    // manifest中请求的上下文（即依赖的相对路径）
 			manifest: require('./dist/dll/vendor-manifest.json')

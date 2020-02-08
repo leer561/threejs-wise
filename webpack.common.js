@@ -4,7 +4,7 @@ const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plug
 const webpack = require('webpack')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const distDll = path.resolve(process.cwd(), 'dist', 'dll')
-
+const copyWebpackPlugin = require("copy-webpack-plugin")
 module.exports = {
 	entry: './app/index.js',
 	module: {
@@ -38,6 +38,18 @@ module.exports = {
 				test: /\.(woff|woff2|eot|ttf|otf)$/,
 				use: [
 					'file-loader'
+				]
+			},
+			{
+				test: /\.(wasm)$/,
+				use: [
+					{
+						loader: 'file-loader',
+						options: {
+							outputPath: 'three/examples/js/libs/draco/',
+							name: '[name].[ext]'
+						},
+					},
 				]
 			},
 			{
@@ -127,7 +139,13 @@ module.exports = {
 				verbose: true,        　　　　　　　　　　//开启在控制台输出信息
 				dry: false        　　　　　　　　　　//启用删除文件
 			}
-		)
+		),
+		new copyWebpackPlugin([
+			{
+				from: "app/static",
+				to: "static"
+			}
+		])
 	],
 	// externals: {
 	// 	Txplayer: 'Txplayer'
