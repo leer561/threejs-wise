@@ -131,7 +131,7 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 		controls = new OrbitControls(camera, renderer.domElement)
 		controls.maxPolarAngle = Math.PI * 0.45
 		controls.minPolarAngle  = Math.PI * 0.2
-		//controls.minDistance = 50
+		controls.minDistance = 70
 		controls.maxDistance = 100
 		controls.enableDamping = true
 		controls.dampingFactor = 0.1
@@ -199,6 +199,11 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 					// TODO 镜头移动
 					const leftDoorAnimate = new LeftDoorAnimate(group)
 					sprite.on('click', ev => {
+						leftDoorAnimate.play(() => {
+							switchFunc()
+						})
+					})
+					sprite.on('touchstart', ev => {
 						leftDoorAnimate.play(() => {
 							switchFunc()
 						})
