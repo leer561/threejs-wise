@@ -4,8 +4,11 @@ import * as THREE from "three"
 import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader"
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import {Interaction} from "three.interaction"
-// 素材
+
 import {onWindowResize} from '../../../common/services/window-resize'
+import {renderData, setRenderData,renderTrim} from "../../../common/services/render-data"
+
+// 素材
 import dot_orange from "../../../assets/images/dot_orange.png"
 import venice_sunset_off from '../../../assets/images/venice_sunset_off.hdr'
 import venice_sunset_1k from '../../../assets/images/venice_sunset_1k.hdr'
@@ -22,7 +25,7 @@ import trimButton from "../../../assets/images/interior.png"
 
 const textureLoader = new THREE.TextureLoader()
 
-const OutLook = ({front, switchFunc, setRender, trimInit}) => {
+const OutLook = ({front, switchFunc, trimInit}) => {
 	// 设置sate
 	const [instanceCar, setInstanceCar] = useState(null)
 	const [hdrCubeRenderTarget, setHdrCubeRenderTarget] = useState(null)
@@ -84,7 +87,7 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 
 		const ground = new THREE.Mesh(
 			new THREE.PlaneBufferGeometry(5000, 5000),
-			new THREE.MeshBasicMaterial( { color: 0x6e6a62, depthWrite: false } )
+			new THREE.MeshBasicMaterial({color: 0x6e6a62, depthWrite: false})
 		)
 		setGround(ground)
 		ground.rotation.x = -Math.PI / 2
@@ -130,16 +133,16 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 		// 处理控制器
 		controls = new OrbitControls(camera, renderer.domElement)
 		controls.maxPolarAngle = Math.PI * 0.45
-		controls.minPolarAngle  = Math.PI * 0.2
+		controls.minPolarAngle = Math.PI * 0.2
 		controls.minDistance = 50
 		controls.maxDistance = 100
 		controls.enableDamping = true
 		controls.dampingFactor = 0.1
-		controls.rotateSpeed = 0.26
+		controls.rotateSpeed = 0.86
 		controls.target.set(0, 0, 0)
 
 		// 设置渲染数据
-		setRender({
+		setRenderData({
 			name: 'car',
 			value: {scene, grid, camera, renderer, controls}
 		})
@@ -163,11 +166,15 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 			// 预加载开关灯素材
 			preEnvironmentLoad(pmremGenerator, scene)
 			// 再次设置渲染数据,增加轮子
-			setRender({
+			setRenderData({
 				name: 'car',
 				value: {scene, grid, camera, renderer, controls, wheels: car.carParts.wheels}
 			})
-
+			//缓存数据
+			setRenderData({
+				name: 'cache',
+				value: {car: {scene, grid, camera, renderer, controls, wheels: car.carParts.wheels}}
+			})
 			const {children} = carScene
 			// 处理灯光部分的环境贴图
 			new RGBELoader()
@@ -201,19 +208,13 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 					sprite.on('click', ev => {
 						leftDoorAnimate.play(() => {
 							switchFunc()
-							setRender({
-								name: 'car',
-								value: null
-							})
+							renderTrim()
 						})
 					})
 					sprite.on('touchstart', ev => {
 						leftDoorAnimate.play(() => {
 							switchFunc()
-							setRender({
-								name: 'car',
-								value: null
-							})
+							renderTrim()
 						})
 					})
 				}
@@ -235,11 +236,9 @@ const OutLook = ({front, switchFunc, setRender, trimInit}) => {
 
 	// 显示内饰
 	const showTrim = () => {
-		setRender({
-			name: 'car',
-			value: null
-		})
+		renderTrim()
 		switchFunc()
+
 	}
 
 	// 挂载后

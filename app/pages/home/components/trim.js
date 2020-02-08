@@ -1,6 +1,6 @@
 import * as THREE from "three"
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
-import {forwardRef,useImperativeHandle } from 'react'
+import {forwardRef, useImperativeHandle} from 'react'
 // 内饰纹理数据
 import front01 from '../../../assets/images/trim/front01.png'
 import front02 from '../../../assets/images/trim/front02.png'
@@ -8,16 +8,17 @@ import front03 from '../../../assets/images/trim/front03.png'
 import front04 from '../../../assets/images/trim/front04.png'
 import front05 from '../../../assets/images/trim/front05.png'
 import front06 from '../../../assets/images/trim/front06.png'
+import {setRenderData, renderData,renderCar} from "../../../common/services/render-data"
+import carImg from "../../../assets/images/show-car.png"
 
 const textureLoader = new THREE.TextureLoader()
 
 // 内饰组件
-const Trim = forwardRef((props,ref) => {
-	const {front,setRender} = props
+const Trim = forwardRef((props, ref) => {
+	const {front, switchFunc} = props
 	const trimCanvas = useRef()
 	// 内饰全局场景
 	let rendererTrim, sceneTrim, cameraTrim, controlsTrim, trimCube, animationFrameId
-
 
 	// 初始化内饰场景
 	const initTrim = () => {
@@ -26,7 +27,6 @@ const Trim = forwardRef((props,ref) => {
 		rendererTrim = new THREE.WebGLRenderer({canvas: trimCanvas.current})
 		rendererTrim.setPixelRatio(window.devicePixelRatio)
 		rendererTrim.setSize(window.innerWidth, window.innerHeight)
-		//rendererTrim.appendChild(rendererTrim.domElement)
 
 		sceneTrim = new THREE.Scene()
 
@@ -38,12 +38,16 @@ const Trim = forwardRef((props,ref) => {
 		controlsTrim.enablePan = false
 		controlsTrim.enableDamping = true
 		controlsTrim.dampingFactor = 0.1
-		controlsTrim.rotateSpeed = -0.26
+		controlsTrim.rotateSpeed = -0.86
 		sceneTrim.add(trimCube)
-		setRender({
-			name:'trim',
-			value:{
-				controlsTrim,sceneTrim,cameraTrim,rendererTrim
+
+		// 设置渲染缓存数据
+		setRenderData({
+			name: 'cache',
+			value: {
+				trim: {
+					controlsTrim, sceneTrim, cameraTrim, rendererTrim
+				}
 			}
 		})
 	}
@@ -72,18 +76,28 @@ const Trim = forwardRef((props,ref) => {
 		})
 	}
 
-	const init = ()=> {
+	const init = () => {
 		initPreTrim().then(() => {
 			initTrim()
 		})
 	}
+
+	const showCar = () => {
+		renderCar()
+		switchFunc()
+	}
+
+	// 对外暴露方法
 	useImperativeHandle(ref, () => {
 		return {
 			init
 		}
 	})
 
-	return (<canvas ref={trimCanvas} style={{display: front}} id="trimCanvas"/>)
+	return (<div style={{display: front}}>
+		<canvas style={{display: front}} ref={trimCanvas} id="trimCanvas"/>
+		<div style={{display: front}} id="show-car" onClick={() => showCar()}><img src={carImg} alt=""/></div>
+	</div>)
 })
 
 export {Trim}

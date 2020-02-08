@@ -2,16 +2,11 @@ import Stats from 'three/examples/jsm/libs/stats.module.js'
 
 import {OutLook} from './components/out-look'
 import {Trim} from "./components/trim"
-import {ShowCar} from "./components/show-car"
-
+import {renderData, setRenderData} from "../../common/services/render-data"
 // 首页组件
 const Home = () => {
 	// 全局变量 供渲染函数使用
-	let renderData = {
-		car: null,
-		trim: null,
-		stats: null
-	}
+	let stats
 
 	const carTrim = useRef()
 
@@ -21,9 +16,9 @@ const Home = () => {
 	// 共同渲染函数
 	const render = () => {
 		requestAnimationFrame(render)
-		const {car, trim, stats} = renderData
+		const {car, trim} = renderData
 		const time = -performance.now() / 1000
-
+		console.log('renderData',renderData)
 		// 车辆部分
 		if (car) {
 			console.log('car')
@@ -51,15 +46,12 @@ const Home = () => {
 		}
 	}
 
-	// 设置全局变量
-	const setRender = data => renderData[data.name] = data.value
-
 	// 初始化
 	const init = () => {
 		const container = document.createElement('div')
 		document.body.appendChild(container)
-		renderData.stats = new Stats()
-		container.appendChild(renderData.stats.dom)
+		stats = new Stats()
+		container.appendChild(stats.dom)
 		render()
 	}
 
@@ -71,11 +63,10 @@ const Home = () => {
 	return (
 		<div>
 			<OutLook switchFunc={() => setFront(false)} front={front ? 'block' : 'none'}
-					 setRender={data => setRender(data)}
 					 trimInit={() => carTrim.current.init()}
 			/>
-			<Trim front={front ? 'none' : 'block'} ref={carTrim} setRender={data => setRender(data)}/>
-			<ShowCar front={front ? 'none' : 'block'} switchFunc={() => setFront(true)}/>
+			<Trim front={front ? 'none' : 'block'} ref={carTrim}
+				  switchFunc={() => setFront(true)}/>
 		</div>
 	)
 }
