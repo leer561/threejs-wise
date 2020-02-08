@@ -18,10 +18,8 @@ const Home = () => {
 		requestAnimationFrame(render)
 		const {car, trim} = renderData
 		const time = -performance.now() / 1000
-		console.log('renderData',renderData)
 		// 车辆部分
 		if (car) {
-			console.log('car')
 			const {grid, renderer, scene, camera, wheels, controls} = car
 			controls.update()
 			grid.position.z = (time) % 100
@@ -39,7 +37,6 @@ const Home = () => {
 		}
 
 		if (trim) {
-			console.log('trim')
 			const {controlsTrim, sceneTrim, cameraTrim, rendererTrim} = trim
 			controlsTrim.update() // required when damping is enabled
 			rendererTrim.render(sceneTrim, cameraTrim)
